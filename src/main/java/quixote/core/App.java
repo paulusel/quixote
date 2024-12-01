@@ -37,11 +37,10 @@ public class App {
         quitAction.triggered.connect( ()->{ stop(); } );
         mainWindow.addAction(quitAction);
 
-        //mainWindow.setLayout(new QStackedLayout());
-        mainWindow.setLayout(new QHBoxLayout());
+        mainWindow.setLayout(new QStackedLayout());
 
-        selector = new Selector(mainWindow);
-        //editor = new Editor(mainWindow);
+        //selector = new Selector(mainWindow);
+        editor = new Editor(mainWindow);
 
     }
 

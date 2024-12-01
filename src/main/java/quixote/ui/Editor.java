@@ -1,5 +1,7 @@
 package quixote.ui;
 
+import quixote.core.Note;
+
 import io.qt.widgets.*;
 
 public class Editor {
@@ -9,8 +11,9 @@ public class Editor {
     private QWidget editor;
 
     public Editor(QWidget parent){
-        editor = new QWidget(parent);
+        editor = new QWidget();
         editor.setLayout(new QVBoxLayout());
+        parent.layout().addWidget(editor);
 
         buffers = new QWidget(editor);
         buffers.setLayout(new QStackedLayout());
@@ -22,6 +25,25 @@ public class Editor {
         editor.layout().addWidget(buffers);
 
         statusline = new Statusline(editor);
-        //statusline.register(container);
+    }
+
+    public void newBuffer(Note note){
+        tabline.newTab(note.title);
+    }
+
+    public void showNext(){
+
+    }
+
+    public void showPrev(){
+
+    }
+
+    public void show(int offset){
+
+    }
+
+    public void closeCurrent(){
+
     }
 }
