@@ -3,12 +3,16 @@ package quixote.core;
 import io.qt.gui.QAction;
 import io.qt.widgets.*;
 
+import quixote.ui.Selector;
+import quixote.ui.Editor;
+
 public class App {
     private static App app;
     private static String[] args;
 
-    private BufferManager mgr;
     private QWidget mainWindow;
+    private Selector selector;
+    private Editor editor;
 
     private App(){}; //
 
@@ -23,8 +27,6 @@ public class App {
     }
 
     private void initialize(){
-        mgr = BufferManager.manager();
-
         QApplication.initialize(App.args);
 
         mainWindow = new QWidget();
@@ -35,12 +37,12 @@ public class App {
         quitAction.triggered.connect( ()->{ stop(); } );
         mainWindow.addAction(quitAction);
 
-        var container = new QVBoxLayout();
-        container.addWidget(new QLabel("Tabline"));
-        container.addWidget(new QTextEdit());
-        container.addWidget(new QLineEdit());
+        //mainWindow.setLayout(new QStackedLayout());
+        mainWindow.setLayout(new QHBoxLayout());
 
-        mainWindow.setLayout(container);
+        selector = new Selector(mainWindow);
+        //editor = new Editor(mainWindow);
+
     }
 
     public void start() {
