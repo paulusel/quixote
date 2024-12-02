@@ -28,94 +28,12 @@
   </dependencyManagement>
 
 
-  <profiles>
-    <!-- Profile for macOS -->
-    <profile>
-        <id>mac</id>
-        <activation>
-            <os>
-                <name>Mac OS X</name>
-            </os>
-        </activation>
-        <dependencies>
-            <!-- Mac Qt native binary -->
-            <dependency>
-                <groupId>io.qtjambi</groupId>
-                <artifactId>qtjambi-native-macos</artifactId>
-                <version>6.8.0</version>
-            </dependency>
-        </dependencies>
-        <build>
-            <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.5.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <mainClass>quixote.Main</mainClass>
-                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
-                    <arguments>
-                            <argument>-XstartOnFirstThread</argument>
-                    </arguments>
-                </configuration>
-            </plugin>
-        </plugins>
-    </pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
-    </build>
-    </profile>
-
-    <!-- Profile for Linux -->
-    <profile>
-        <id>linux</id>
-        <activation>
-            <os>
-                <name>Linux</name>
-            </os>
-        </activation>
-        <dependencies>
-                <!-- Linux Qt native binary -->
-            <dependency>
-                <groupId>io.qtjambi</groupId>
-                <artifactId>qtjambi-native-linux-x64</artifactId>
-                <version>6.8.0</version>
-            </dependency>
-        </dependencies>
-    </profile>
-
-    <!-- Profile for Windows -->
-    <profile>
-        <id>windows</id>
-        <activation>
-            <os>
-                <name>Windows</name>
-            </os>
-        </activation>
-        <dependencies>
-            <!-- Windows Qt native binary -->
-            <dependency>
-                <groupId>io.qtjambi</groupId>
-                <artifactId>qtjambi-native-windows-x64</artifactId>
-                <version>6.8.0</version>
-            </dependency>
-        </dependencies>
-    </profile>
-  </profiles>
-
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- Optionally: parameterized tests support -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
@@ -205,4 +123,108 @@
       </plugins>
     </pluginManagement>
   </build>
+
+<profiles>
+    <!-- Profile for macOS -->
+    <profile>
+        <id>mac</id>
+        <activation>
+            <os>
+                <name>Mac OS X</name>
+            </os>
+        </activation>
+        <dependencies>
+            <dependency>
+                <groupId>io.qtjambi</groupId>
+                <artifactId>qtjambi-native-macos</artifactId>
+                <version>6.8.0</version>
+            </dependency>
+        </dependencies>
+        <build>
+            <pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.5.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>quixote.Main</mainClass>
+                            <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                            <arguments>
+                                    <argument>-Djava.library.path=/usr/local/Qt/6.8.1/gcc_64/lib</argument>
+                                    <argument>-XstartOnFirstThread</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </pluginManagement>
+        </build>
+    </profile>
+
+    <!-- Profile for Linux -->
+    <profile>
+        <id>linux</id>
+        <activation>
+            <os>
+                <name>Linux</name>
+            </os>
+        </activation>
+        <dependencies>
+            <dependency>
+                <groupId>io.qtjambi</groupId>
+                <artifactId>qtjambi-native-linux-x64</artifactId>
+                <version>6.8.0</version>
+            </dependency>
+        </dependencies>
+    </profile>
+
+    <!-- Profile for Windows -->
+    <profile>
+        <id>windows</id>
+        <activation>
+            <os>
+                <name>Windows</name>
+            </os>
+        </activation>
+        <dependencies>
+            <dependency>
+                <groupId>io.qtjambi</groupId>
+                <artifactId>qtjambi-native-windows-x64</artifactId>
+                <version>6.8.0</version>
+            </dependency>
+        </dependencies>
+        <build>
+            <pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.5.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>quixote.Main</mainClass>
+                            <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                            <arguments>
+                                    <argument>-Djava.library.path=C:\Qt\6.8.1\msvc2022_64\bin</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </pluginManagement>
+        </build>
+    </profile>
+  </profiles>
 </project>
