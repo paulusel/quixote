@@ -6,7 +6,7 @@ public class Statusline {
     private QStatusBar statusBar;
 
     public Statusline(QWidget parent){
-        statusBar = new QStatusBar();
+        statusBar = new QStatusBar(parent);
         parent.layout().addWidget(statusBar);
 
         statusBar.addWidget(new QLabel("Status"));

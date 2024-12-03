@@ -23,8 +23,6 @@ public class Editor {
         // one text edit
         buffers.layout().addWidget(new QTextEdit());
         editor.layout().addWidget(buffers);
-
-        statusline = new Statusline(editor);
     }
 
     public void newBuffer(Note note){

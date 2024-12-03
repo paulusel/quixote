@@ -5,10 +5,12 @@ import io.qt.widgets.*;
 
 import quixote.ui.Selector;
 import quixote.ui.Editor;
+import quixote.ui.Statusline;
 
 public class App {
     private static App app;
     private static String[] args;
+    private Statusline statusline;
 
     private QWidget mainWindow;
     private Selector selector;
@@ -34,14 +36,16 @@ public class App {
 
         var quitAction = new QAction();
         quitAction.setShortcut("CTRL+Q");
-        quitAction.triggered.connect( ()->{ stop(); } );
+        quitAction.triggered.connect(this::stop);
         mainWindow.addAction(quitAction);
 
-        mainWindow.setLayout(new QStackedLayout());
+        var upperArea = new QWidget();
+        upperArea.setLayout(new QStackedLayout());
+        editor = new Editor(upperArea);
 
-        //selector = new Selector(mainWindow);
-        editor = new Editor(mainWindow);
-
+        mainWindow.setLayout(new QVBoxLayout());
+        mainWindow.layout().addWidget(upperArea);
+        statusline = new Statusline(mainWindow);
     }
 
     public void start() {
@@ -56,6 +60,6 @@ public class App {
     }
 
     private void cleanup(){
-
+        mainWindow.dispose();
     }
 }

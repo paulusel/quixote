@@ -9,7 +9,7 @@ public class Selector {
     private QWidget selector;
 
     public Selector(QWidget parent){
-        selector = new QWidget();
+        selector = new QWidget(parent);
         selector.setLayout(new QHBoxLayout());
         parent.layout().addWidget(selector);
 

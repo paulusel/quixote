@@ -6,15 +6,19 @@ public class Tabline {
     private QWidget tabline;
 
     public Tabline(QWidget parent){
-        tabline = new QWidget();
+        tabline = new QWidget(parent);
         tabline.setLayout(new QHBoxLayout());
         parent.layout().addWidget(tabline);
 
-        //DEBUG
+        // FIXME - to remove
         newTab("Note");
     }
 
     public void newTab(String name){
         tabline.layout().addWidget(new QLabel(name));
+    }
+
+    public void closeActive(){
+
     }
 }
