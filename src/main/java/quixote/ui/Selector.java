@@ -1,26 +1,35 @@
 package quixote.ui;
 
+import quixote.core.App;
+import quixote.core.Note;
 import io.qt.core.QDir;
+import io.qt.core.Qt;
+import io.qt.gui.QKeyEvent;
 import io.qt.gui.QFileSystemModel;
 import io.qt.widgets.*;
 
-public class Selector {
+final public class Selector extends QTreeView {
 
-    private QWidget selector;
+    private App app;
 
-    public Selector(QWidget parent){
-        selector = new QWidget(parent);
-        selector.setLayout(new QHBoxLayout());
-        parent.layout().addWidget(selector);
+    public Selector(QWidget parent, App app){
+        this.app = app;
+        parent.layout().addWidget(this);
 
         var model = new QFileSystemModel();
         model.setRootPath(QDir.homePath());
 
-        var tree = new QTreeView();
-        tree.setModel(model);
-        tree.setHeaderHidden(true);
+        this.setModel(model);
+        this.setHeaderHidden(true);
+    }
 
-        selector.layout().addWidget(tree);
-        // other construction
+    @Override
+    public void keyPressEvent(QKeyEvent event){
+        if(event.key() == Qt.Key.Key_Return.value()){
+            app.openNote(new Note());
+        }
+        else{
+            super.keyPressEvent(event);
+        }
     }
 }
