@@ -26,7 +26,7 @@ final public class Selector extends QTreeView {
     @Override
     public void keyPressEvent(QKeyEvent event){
         if(event.key() == Qt.Key.Key_Return.value()){
-            app.openNote(new Note());
+            app.openNote();
         }
         else{
             super.keyPressEvent(event);

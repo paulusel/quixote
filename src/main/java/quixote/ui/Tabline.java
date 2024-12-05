@@ -9,9 +9,6 @@ public class Tabline {
         tabline = new QWidget(parent);
         tabline.setLayout(new QHBoxLayout());
         parent.layout().addWidget(tabline);
-
-        // FIXME - to remove
-        newTab("Note");
     }
 
     public void newTab(String name){

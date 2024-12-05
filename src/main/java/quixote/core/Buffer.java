@@ -1,10 +1,20 @@
 package quixote.core;
 
-import io.qt.gui.QTextDocument;
+import quixote.core.Note;
 
-public class Buffer {
-    private QTextDocument document;
-    public Buffer getLast(){
-        return new Buffer();
+import io.qt.widgets.QPlainTextEdit;
+import io.qt.gui.QTextCursor;
+
+final public class Buffer extends QPlainTextEdit {
+    private Note note;
+
+    public Buffer(Note note){
+        this.note = note;
+        this.setDocument(note.document);
+        this.setLineWrapMode(LineWrapMode.NoWrap);
+    }
+
+    public void closeBuffer(){
+
     }
 }

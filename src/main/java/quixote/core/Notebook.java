@@ -1,5 +1,6 @@
 package quixote.core;
 
 public class Notebook {
-    private String name;
+    public String name;
+    public String description;
 }

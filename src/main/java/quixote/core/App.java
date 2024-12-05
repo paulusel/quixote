@@ -83,6 +83,13 @@ public class App extends QWidget {
         viewChanged.emit(1);
     }
 
+    public void openNote(){
+        var note = new Note();
+        note.title = "New Note";
+        this.openNote(note);
+        // TODO: Do something with the new note
+    }
+
     private void cleanup(){
         mainWindow.dispose();
     }
@@ -114,6 +121,9 @@ public class App extends QWidget {
         else if(key == Qt.Key.Key_Tab.value()){
             // toggle selector/editor
             viewChanged.emit((layout.currentIndex()+1)%2);
+        }
+        else if(key == Qt.Key.Key_N.value()){
+            editor.showNext();
         }
 
         return true;
