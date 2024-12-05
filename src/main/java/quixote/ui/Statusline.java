@@ -4,21 +4,20 @@ import quixote.core.App;
 
 import io.qt.widgets.*;
 
-final public class Statusline {
-    private QStatusBar statusBar;
+final public class Statusline extends QStatusBar {
     private QLabel mode;
     private App app;
 
     public Statusline(QWidget parent, App app){
+        super(parent);
         this.app = app;
 
-        statusBar = new QStatusBar(parent);
-        parent.layout().addWidget(statusBar);
+        parent.layout().addWidget(this);
         this.app.modeChanged.connect(this::setMode);
 
         mode = new QLabel();
         setMode("NORMAL");
-        statusBar.addWidget(mode);
+        this.addWidget(mode);
     }
 
     public void setMode(String mode){
