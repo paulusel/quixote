@@ -89,7 +89,6 @@ public class App extends QWidget {
 
     @Override
     public boolean eventFilter(QObject obj, QEvent event){
-        obj.dispose();
         if(event.type() != QEvent.Type.KeyPress)
             return false;
 
