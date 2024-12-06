@@ -11,9 +11,11 @@ import io.qt.core.QObject;
 import quixote.ui.Selector;
 import quixote.ui.Editor;
 import quixote.ui.Statusline;
+import quixote.database.Databs;
 
 public class App extends QWidget {
     private static App app;
+    private static Databs db;
 
     private QWidget mainWindow;
     private QWidget viewArea;
@@ -37,6 +39,7 @@ public class App extends QWidget {
         if(app == null) {
             QApplication.initialize(args);
             app = new App();
+            db = new Databs();
             app.initialize();
         }
 
