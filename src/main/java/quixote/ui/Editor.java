@@ -1,8 +1,6 @@
 package quixote.ui;
 
 import quixote.core.Note;
-import quixote.core.App;
-import quixote.core.Buffer;
 
 import java.util.ArrayList;
 

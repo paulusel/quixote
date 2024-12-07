@@ -1,7 +1,5 @@
 package quixote.ui;
 
-import quixote.core.App;
-
 import io.qt.widgets.*;
 
 final public class Statusline extends QStatusBar {

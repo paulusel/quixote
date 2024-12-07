@@ -1,6 +1,5 @@
 package quixote.ui;
 
-import quixote.core.App;
 import quixote.core.Note;
 import io.qt.core.QDir;
 import io.qt.core.Qt;

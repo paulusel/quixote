@@ -1,4 +1,6 @@
-package quixote.core;
+package quixote.ui;
+
+import quixote.core.*;
 
 import io.qt.gui.QAction;
 import io.qt.gui.QKeyEvent;
@@ -8,14 +10,9 @@ import io.qt.core.QEvent;
 import io.qt.core.Qt;
 import io.qt.core.QObject;
 
-import quixote.ui.Selector;
-import quixote.ui.Editor;
-import quixote.ui.Statusline;
-import quixote.database.Databs;
-
 public class App extends QWidget {
     public static App app;
-    public static Databs db;
+    public static Database db;
 
     private QWidget mainWindow;
     private QWidget viewArea;
@@ -40,7 +37,7 @@ public class App extends QWidget {
         if(app == null) {
             QApplication.initialize(args);
             app = new App();
-            db = new Databs();
+            db = new Database();
             app.initialize();
         }
 

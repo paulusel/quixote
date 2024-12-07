@@ -1,9 +1,9 @@
-package quixote.database;
+package quixote.core;
 
 import java.io.File;
 import java.sql.*;
 
-final public class Databs {
+final public class Database {
     private String filename = "quixote.db";
     private Connection conn;
 
@@ -22,7 +22,7 @@ final public class Databs {
         return data_home;
     }
 
-    public Databs(){
+    public Database(){
         var db_path = "jdbc:sqlite:" + mkdir() + File.separator + filename;
         try{
             conn = DriverManager.getConnection(db_path);

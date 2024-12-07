@@ -1,4 +1,6 @@
-package quixote.core;
+package quixote.ui;
+
+import quixote.core.*;
 
 import io.qt.widgets.QPlainTextEdit;
 import io.qt.core.QCoreApplication;
