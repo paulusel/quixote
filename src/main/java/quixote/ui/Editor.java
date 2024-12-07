@@ -8,35 +8,32 @@ import java.util.ArrayList;
 
 import io.qt.widgets.*;
 
-public class Editor {
+final public class Editor extends QWidget {
     private Tabline tabline;
     private QStackedLayout bufferLayout;
-    private QWidget editor;
-    private App app;
 
     private ArrayList<Buffer> buffers = new ArrayList<>();
 
-    public Editor(QWidget parent, App app){
-        this.app = app;
+    public Editor(QWidget parent){
+        super(parent);
 
-        editor = new QWidget();
-        editor.setLayout(new QVBoxLayout());
-        parent.layout().addWidget(editor);
+        parent.layout().addWidget(this);
+        this.setLayout(new QVBoxLayout());
 
-        tabline = new Tabline(editor);
+        tabline = new Tabline(this);
 
-        var buffers = new QWidget(editor);
+        QWidget bufferContainer = new QWidget(this);
         bufferLayout = new QStackedLayout();
-        buffers.setLayout(bufferLayout);
-        editor.layout().addWidget(buffers);
-
+        bufferContainer.setLayout(bufferLayout);
+        this.layout().addWidget(bufferContainer);
     }
 
     public void newBuffer(Note note){
         tabline.newTab(note.title);
 
         var edit = new Buffer(note);
-        edit.installEventFilter(app);
+        // FIXME: Every buffer listens to modeChange. Make only active buffer listen?
+        App.app.modeChanged.connect(edit::changeMode);
         bufferLayout.addWidget(edit);
         bufferLayout.setCurrentWidget(edit);
 

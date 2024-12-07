@@ -10,10 +10,9 @@ import io.qt.widgets.*;
 
 final public class Selector extends QTreeView {
 
-    private App app;
+    public Selector(QWidget parent){
+        super(parent);
 
-    public Selector(QWidget parent, App app){
-        this.app = app;
         parent.layout().addWidget(this);
 
         var model = new QFileSystemModel();
@@ -26,7 +25,7 @@ final public class Selector extends QTreeView {
     @Override
     public void keyPressEvent(QKeyEvent event){
         if(event.key() == Qt.Key.Key_Return.value()){
-            app.openNote();
+            App.app.openNote();
         }
         else{
             super.keyPressEvent(event);

@@ -2,17 +2,15 @@ package quixote.ui;
 
 import io.qt.widgets.*;
 
-public class Tabline {
-    private QWidget tabline;
-
+final public class Tabline extends QWidget {
     public Tabline(QWidget parent){
-        tabline = new QWidget(parent);
-        tabline.setLayout(new QHBoxLayout());
-        parent.layout().addWidget(tabline);
+        super(parent);
+        this.setLayout(new QHBoxLayout());
+        parent.layout().addWidget(this);
     }
 
     public void newTab(String name){
-        tabline.layout().addWidget(new QLabel(name));
+        this.layout().addWidget(new QLabel(name));
     }
 
     public void closeActive(){

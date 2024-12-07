@@ -6,14 +6,12 @@ import io.qt.widgets.*;
 
 final public class Statusline extends QStatusBar {
     private QLabel mode;
-    private App app;
 
-    public Statusline(QWidget parent, App app){
+    public Statusline(QWidget parent){
         super(parent);
-        this.app = app;
 
         parent.layout().addWidget(this);
-        this.app.modeChanged.connect(this::setMode);
+        App.app.modeChanged.connect(this::setMode);
 
         mode = new QLabel();
         setMode("NORMAL");
