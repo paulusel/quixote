@@ -60,7 +60,7 @@ public class TreeModel extends QAbstractItemModel {
             return new QModelIndex();
 
         NoteItem pItem = parent.isValid()
-            ? (NoteItem) parent.data(Qt.ItemDataRole.UserRole)
+            ? itemMap.get(parent.internalId())
             : root;
 
         NoteItem item = ((Notebook)pItem).itemAt(row);
@@ -71,17 +71,12 @@ public class TreeModel extends QAbstractItemModel {
 
     @Override
     public Object data(QModelIndex index, int role){
-        if(role == Qt.ItemDataRole.UserRole) {
-            if(!index.isValid())
-                return root;
-            else{
-                return itemMap.get(index.internalId());
-            }
-        }
-        else if(role == Qt.ItemDataRole.DisplayRole){
+        if(role == Qt.ItemDataRole.DisplayRole){
             return itemMap.get(index.internalId()).title();
         }
-
+        else if(role == Qt.ItemDataRole.UserRole) {
+            return itemMap.get(index.internalId());
+        }
         // For all other data roles
         return null;
     }

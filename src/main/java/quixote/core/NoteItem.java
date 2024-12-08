@@ -16,7 +16,6 @@ public abstract class NoteItem {
     }
 
     public NoteItem parent(){
-       // NoteItem shouldn't have mutator functions. So returning reference should be safe
         return parent;
     }
 

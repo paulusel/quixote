@@ -16,8 +16,8 @@ final public class Buffer extends QPlainTextEdit {
 
     public Buffer(Note note){
         this.note = note;
-        this.setDocument(note.doc);
-        this.cursor = new QTextCursor(note.doc);
+        this.setDocument(note.document());
+        this.cursor = new QTextCursor(note.document());
         this.setLineWrapMode(LineWrapMode.NoWrap);
     }
 
