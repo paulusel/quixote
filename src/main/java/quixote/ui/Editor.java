@@ -2,7 +2,7 @@ package quixote.ui;
 
 import quixote.core.Note;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import io.qt.widgets.*;
 
@@ -10,7 +10,7 @@ final public class Editor extends QWidget {
     private Tabline tabline;
     private QStackedLayout bufferLayout;
 
-    private ArrayList<Buffer> buffers = new ArrayList<>();
+    private HashMap<Note, Buffer> buffers = new HashMap<>();
 
     public Editor(QWidget parent){
         super(parent);
@@ -27,6 +27,13 @@ final public class Editor extends QWidget {
     }
 
     public void newBuffer(Note note){
+        Buffer buffer = buffers.get(note);
+
+        if(buffer != null){
+            bufferLayout.setCurrentWidget(buffer);
+            return;
+        }
+
         tabline.newTab(note.title());
 
         var edit = new Buffer(note);
@@ -35,7 +42,7 @@ final public class Editor extends QWidget {
         bufferLayout.addWidget(edit);
         bufferLayout.setCurrentWidget(edit);
 
-        buffers.add(edit);
+        buffers.put(note, edit);
     }
 
     public boolean isEmpty(){
