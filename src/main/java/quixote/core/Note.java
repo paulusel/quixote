@@ -3,15 +3,12 @@ package quixote.core;
 import io.qt.gui.QTextDocument;
 import io.qt.widgets.QPlainTextDocumentLayout;
 
-public class Note {
-    public QTextDocument document;
-    public String title;
-    public String notebook;
+public class Note extends NoteItem {
+    public QTextDocument doc;
 
-    public Note(){
-        document = new QTextDocument();
-        document.setDocumentLayout(new QPlainTextDocumentLayout(document));
-        title = new String();
-        notebook = new String();
+    public Note(Notebook notebook, String title, String txt, int id){
+        super(notebook, title, id);
+        doc= new QTextDocument(txt);
+        doc.setDocumentLayout(new QPlainTextDocumentLayout(doc));
     }
 }

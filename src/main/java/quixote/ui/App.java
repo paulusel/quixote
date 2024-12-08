@@ -87,9 +87,9 @@ public class App extends QWidget {
     }
 
     public void openNote(){
-        var note = new Note();
-        note.title = "New Note";
-        this.openNote(note);
+//        var note = new Note();
+ //       note.title = "New Note";
+  //      this.openNote(note);
         // TODO: Do something with the new note
     }
 

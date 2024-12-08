@@ -1,21 +1,20 @@
 package quixote.ui;
 
 import quixote.core.Note;
-import io.qt.core.QDir;
+import quixote.core.TreeModel;
+
+
 import io.qt.core.Qt;
 import io.qt.gui.QKeyEvent;
-import io.qt.gui.QFileSystemModel;
 import io.qt.widgets.*;
 
 final public class Selector extends QTreeView {
+        TreeModel model = new TreeModel();
 
     public Selector(QWidget parent){
         super(parent);
 
         parent.layout().addWidget(this);
-
-        var model = new QFileSystemModel();
-        model.setRootPath(QDir.homePath());
 
         this.setModel(model);
         this.setHeaderHidden(true);
@@ -24,7 +23,15 @@ final public class Selector extends QTreeView {
     @Override
     public void keyPressEvent(QKeyEvent event){
         if(event.key() == Qt.Key.Key_Return.value()){
-            App.app.openNote();
+            var item = currentIndex().data(Qt.ItemDataRole.UserRole);
+            if(item instanceof Note) {
+                App.app.openNote((Note) item);
+            }
+            else{
+                if(model.hasChildren(currentIndex())){
+                    this.expand(currentIndex());
+                }
+            }
         }
         else{
             super.keyPressEvent(event);

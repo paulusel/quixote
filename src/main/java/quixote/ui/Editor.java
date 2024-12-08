@@ -27,7 +27,7 @@ final public class Editor extends QWidget {
     }
 
     public void newBuffer(Note note){
-        tabline.newTab(note.title);
+        tabline.newTab(note.title());
 
         var edit = new Buffer(note);
         // FIXME: Every buffer listens to modeChange. Make only active buffer listen?

@@ -38,8 +38,9 @@ final public class Database {
     public void createTables() throws SQLException {
             PreparedStatement stmnt;
 
-            String query = "CREATE TABLE IF NOT EXISTS notes ("
+            String query = "CREATE TABLE IF NOT EXISTS noteitem ("
                             + "id INTEGER PRIMARY KEY,"
+                            + "isNote INTEGER,"
                             + "title VARCHAR,"
                             + "note TEXT,"
                             + "modified DATE"
