@@ -61,6 +61,7 @@ public class App extends QWidget {
         viewChanged.connect(layout::setCurrentIndex);
         selector = new Selector(viewArea);
         editor = new Editor(viewArea);
+        editor.editorEmpty.connect(this::switchView);
 
         mainWindow.setLayout(new QVBoxLayout());
         mainWindow.layout().addWidget(viewArea);
@@ -83,8 +84,9 @@ public class App extends QWidget {
         modeChanged.emit("INSERT");
         editor.newBuffer(note);
         // FIXME  --- index value shouldn't be hardcoded
-        viewChanged.emit(1);
+        switchView();
     }
+
 
     public void openNote(){
 //        var note = new Note();
@@ -95,6 +97,10 @@ public class App extends QWidget {
 
     private void cleanup(){
         mainWindow.dispose();
+    }
+
+    private void switchView(){
+        viewChanged.emit((layout.currentIndex()+1)%2);
     }
 
     @Override
@@ -155,7 +161,7 @@ public class App extends QWidget {
         }
         else if(key == key_tab){
             // toggle selector/editor
-            viewChanged.emit((layout.currentIndex()+1)%2);
+            switchView();
         }
         else if(key == Qt.Key.Key_N.value()){
             editor.showNext();

@@ -7,19 +7,19 @@ import java.util.HashMap;
 import io.qt.widgets.*;
 
 final public class Editor extends QWidget {
+
+    final public Signal0 editorEmpty = new Signal0();
+
     private Tabline tabline;
     private QStackedLayout bufferLayout;
-
     private HashMap<Note, Buffer> buffers = new HashMap<>();
 
     public Editor(QWidget parent){
         super(parent);
-
         parent.layout().addWidget(this);
+
         this.setLayout(new QVBoxLayout());
-
         tabline = new Tabline(this);
-
         QWidget bufferContainer = new QWidget(this);
         bufferLayout = new QStackedLayout();
         bufferContainer.setLayout(bufferLayout);
@@ -34,15 +34,23 @@ final public class Editor extends QWidget {
             return;
         }
 
-        tabline.newTab(note.title());
+        buffer = new Buffer(note);
+        tabline.newTab(buffer.tab());
+        App.app.modeChanged.connect(buffer::changeMode);
+        buffer.bufferClosed.connect(this::reapBuffer);
 
-        var edit = new Buffer(note);
-        // FIXME: Every buffer listens to modeChange. Make only active buffer listen?
-        App.app.modeChanged.connect(edit::changeMode);
-        bufferLayout.addWidget(edit);
-        bufferLayout.setCurrentWidget(edit);
+        bufferLayout.addWidget(buffer);
+        bufferLayout.setCurrentWidget(buffer);
 
-        buffers.put(note, edit);
+        buffers.put(note, buffer);
+    }
+
+    public void reapBuffer(Buffer buffer) {
+        buffers.remove(buffer.note());
+
+        if(buffers.isEmpty())
+            editorEmpty.emit();
+        buffer.dispose();
     }
 
     public boolean isEmpty(){
@@ -58,10 +66,6 @@ final public class Editor extends QWidget {
     }
 
     public void show(int offset){
-
-    }
-
-    public void closeCurrent(){
 
     }
 }

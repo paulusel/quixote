@@ -9,11 +9,7 @@ final public class Tabline extends QWidget {
         parent.layout().addWidget(this);
     }
 
-    public void newTab(String name){
-        this.layout().addWidget(new QLabel(name));
-    }
-
-    public void closeActive(){
-
+    public void newTab(QWidget tab){
+        this.layout().addWidget(tab);
     }
 }

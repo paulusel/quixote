@@ -2,27 +2,39 @@ package quixote.ui;
 
 import quixote.core.*;
 
-import io.qt.widgets.QPlainTextEdit;
 import io.qt.core.QCoreApplication;
 import io.qt.core.QEvent;
 import io.qt.core.Qt;
 import io.qt.gui.QKeyEvent;
 import io.qt.gui.QTextCursor;
+import io.qt.widgets.*;
 
 final public class Buffer extends QPlainTextEdit {
     private Note note;
+    private QLabel tab;
     private boolean insertMode = true;
     private QTextCursor cursor;
 
+    public final Signal1<Buffer> bufferClosed = new Signal1<>();
+
     public Buffer(Note note){
         this.note = note;
+        this.tab = new QLabel(note.title(), this);
         this.setDocument(note.document());
         this.cursor = new QTextCursor(note.document());
         this.setLineWrapMode(LineWrapMode.NoWrap);
     }
 
     public void closeBuffer(){
+        bufferClosed.emit(this);
+    }
 
+    public Note note() {
+        return note;
+    }
+
+    public QWidget tab(){
+        return tab;
     }
 
     @Override
@@ -57,6 +69,9 @@ final public class Buffer extends QPlainTextEdit {
                 else if(key == Qt.Key.Key_X.value()){
                     cursor.deleteChar();
                     setTextCursor(cursor);
+                }
+                else if(key == Qt.Key.Key_Q.value()){
+                    closeBuffer();
                 }
             }
 
