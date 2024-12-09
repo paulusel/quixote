@@ -3,7 +3,7 @@ package quixote.ui;
 import quixote.core.*;
 
 import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Consumer;
 
 import io.qt.core.QCoreApplication;
 import io.qt.core.QEvent;
@@ -17,6 +17,8 @@ final public class Buffer extends QPlainTextEdit {
     private QLabel tab;
     private boolean insertMode = true;
     private QTextCursor cursor;
+    private HashMap<Integer, QTextCursor.MoveOperation> keyMotionMap = new HashMap<>();
+    private Consumer<QTextCursor.MoveOperation> moveCursor;
 
     public final Signal1<Buffer> bufferClosed = new Signal1<>();
 
@@ -26,9 +28,26 @@ final public class Buffer extends QPlainTextEdit {
         this.setDocument(note.document());
         this.cursor = new QTextCursor(note.document());
         this.setLineWrapMode(LineWrapMode.NoWrap);
+
+        keyMotionMap.put(Qt.Key.Key_L.value(), QTextCursor.MoveOperation.Right);
+        keyMotionMap.put(Qt.Key.Key_H.value(), QTextCursor.MoveOperation.Left);
+        keyMotionMap.put(Qt.Key.Key_J.value(), QTextCursor.MoveOperation.Down);
+        keyMotionMap.put(Qt.Key.Key_K.value(), QTextCursor.MoveOperation.Up);
+        keyMotionMap.put(Qt.Key.Key_W.value(), QTextCursor.MoveOperation.NextWord);
+        keyMotionMap.put(Qt.Key.Key_B.value(), QTextCursor.MoveOperation.PreviousWord);
+        keyMotionMap.put(Qt.Key.Key_0.value(), QTextCursor.MoveOperation.StartOfLine);
+        keyMotionMap.put(Qt.Key.Key_Dollar.value(), QTextCursor.MoveOperation.EndOfLine);
+        //keyMotionMap.put(Qt.Key.Key_G.value(), QTextCursor.MoveOperation.StartOfLine);
+        keyMotionMap.put(Qt.Key.Key_G.value(), QTextCursor.MoveOperation.End);
+
+        moveCursor = (QTextCursor.MoveOperation op) -> {
+            cursor.movePosition(op);
+            setTextCursor(cursor);
+        };
     }
 
     public void closeBuffer(){
+        tab.dispose();
         bufferClosed.emit(this);
     }
 
@@ -47,59 +66,32 @@ final public class Buffer extends QPlainTextEdit {
             if (insertMode) {
                 if (key != Qt.Key.Key_Escape.value()) {
                     super.event(e);
-                    return true;
+                }
+                else{
+                    QCoreApplication.sendEvent(App.app, e);
                 }
             } else {
                 // Edit/move shotcuts in Normal Mode
-                Map<Integer, Runnable> keyActions = new HashMap<>();
-                keyActions.put(Qt.Key.Key_L.value(), () -> { cursor.movePosition(QTextCursor.MoveOperation.Right);
+                var moveOp = keyMotionMap.get(key);
+                if(moveOp != null){
+                    moveCursor(moveOp);
+                }
+                else if(key == Qt.Key.Key_X.value()) {
+                    cursor.deleteChar();
                     setTextCursor(cursor);
-                });
-                keyActions.put(Qt.Key.Key_H.value(), () -> { cursor.movePosition(QTextCursor.MoveOperation.Left);
-                    setTextCursor(cursor);
-                });
-                keyActions.put(Qt.Key.Key_J.value(), () -> { cursor.movePosition(QTextCursor.MoveOperation.Down);
-                    setTextCursor(cursor);
-                });
-                keyActions.put(Qt.Key.Key_K.value(), () -> { cursor.movePosition(QTextCursor.MoveOperation.Up);
-                    setTextCursor(cursor);
-                });
-                keyActions.put(Qt.Key.Key_W.value(), () -> { cursor.movePosition(QTextCursor.MoveOperation.NextWord);
-                    setTextCursor(cursor);
-                });
-                keyActions.put(Qt.Key.Key_B.value(), () -> { cursor.movePosition(QTextCursor.MoveOperation.PreviousWord);
-                    setTextCursor(cursor);
-                });
-                keyActions.put(Qt.Key.Key_0.value(), () -> { cursor.movePosition(QTextCursor.MoveOperation.StartOfLine);
-                    setTextCursor(cursor);
-                });
-                keyActions.put(Qt.Key.Key_Dollar.value(), () -> { cursor.movePosition(QTextCursor.MoveOperation.EndOfLine);
-                    setTextCursor(cursor);
-                });
-                keyActions.put(Qt.Key.Key_G.value(), () -> { cursor.movePosition(QTextCursor.MoveOperation.StartOfLine);
-                    setTextCursor(cursor);
-                });
-                keyActions.put(Qt.Key.Key_G.value(), () -> { cursor.movePosition(QTextCursor.MoveOperation.End);
-                    setTextCursor(cursor);
-                });
-                keyActions.put(Qt.Key.Key_X.value(), () -> { cursor.deleteChar();
-                    setTextCursor(cursor);
-                });
-                keyActions.put(Qt.Key.Key_Q.value(), () -> {
+                }
+                else if(key == Qt.Key.Key_Q.value()) {
                     // Call the closeBuffer method when 'Q' is pressed
                     closeBuffer();
-                });
-
-                Runnable action = keyActions.get(key);
-                if (action != null) {
-                    action.run();
-                    return true;
+                }
+                else {
+                    QCoreApplication.sendEvent(App.app, e);
                 }
             }
 
-            QCoreApplication.sendEvent(App.app, e);
             return true;
         }
+
         return super.event(e);
     }
 

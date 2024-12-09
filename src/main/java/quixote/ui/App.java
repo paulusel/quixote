@@ -17,7 +17,6 @@ public class App extends QWidget {
     private QWidget mainWindow;
     private QWidget viewArea;
     private QStackedLayout layout; // layout manager for viewArrea
-    private Selector selector;
     private Editor editor;
     private Statusline statusline;
     private boolean normalMode = true;
@@ -26,25 +25,22 @@ public class App extends QWidget {
     public final Signal1<@QtPrimitiveType Integer> viewChanged = new Signal1<>();
     public final Signal1<String> modeChanged = new Signal1<>();
 
-    private static int key_esc = Qt.Key.Key_Escape.value();
-    private static int key_i = Qt.Key.Key_I.value();
-    private static int key_tab = Qt.Key.Key_Tab.value();
+    private static final int key_esc = Qt.Key.Key_Escape.value();
+    private static final int key_i = Qt.Key.Key_I.value();
+    private static final int key_tab = Qt.Key.Key_Tab.value();
 
-    // constructors
-    private App(){}; //
+    public static void initialize(String[] args){
+        if(app != null)
+            return;
 
-    static public App init(String[] args){
-        if(app == null) {
-            QApplication.initialize(args);
-            app = new App();
-            db = new Database();
-            app.initialize();
-        }
-
-        return app;
+        QApplication.initialize(args);
+        QApplication.setCursorFlashTime(0);
+        app = new App();
+        db = new Database();
     }
 
-    private void initialize(){
+    // constructors
+    private App(){
         mainWindow = new QWidget();
         mainWindow.setWindowTitle("Quixote");
 
@@ -59,13 +55,13 @@ public class App extends QWidget {
 
         // connect slot
         viewChanged.connect(layout::setCurrentIndex);
-        selector = new Selector(viewArea);
+        new Selector(viewArea);
         editor = new Editor(viewArea);
         editor.editorEmpty.connect(this::switchView);
 
         mainWindow.setLayout(new QVBoxLayout());
         mainWindow.layout().addWidget(viewArea);
-        statusline = new Statusline(mainWindow);
+        statusline = new Statusline(mainWindow, this);
     }
 
     public void start() {
@@ -83,16 +79,7 @@ public class App extends QWidget {
         normalMode = false;
         modeChanged.emit("INSERT");
         editor.newBuffer(note);
-        // FIXME  --- index value shouldn't be hardcoded
         switchView();
-    }
-
-
-    public void openNote(){
-//        var note = new Note();
- //       note.title = "New Note";
-  //      this.openNote(note);
-        // TODO: Do something with the new note
     }
 
     private void cleanup(){

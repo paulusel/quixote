@@ -5,11 +5,11 @@ import io.qt.widgets.*;
 final public class Statusline extends QStatusBar {
     private QLabel mode;
 
-    public Statusline(QWidget parent){
+    public Statusline(QWidget parent, App app){
         super(parent);
 
         parent.layout().addWidget(this);
-        App.app.modeChanged.connect(this::setMode);
+        app.modeChanged.connect(this::setMode);
 
         mode = new QLabel();
         setMode("NORMAL");
