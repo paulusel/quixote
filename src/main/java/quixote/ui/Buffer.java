@@ -3,7 +3,7 @@ package quixote.ui;
 import quixote.core.*;
 
 import java.util.HashMap;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import io.qt.core.QCoreApplication;
 import io.qt.core.QEvent;
@@ -18,7 +18,7 @@ final public class Buffer extends QPlainTextEdit {
     private boolean insertMode = true;
     private QTextCursor cursor;
     private HashMap<Integer, QTextCursor.MoveOperation> keyMotionMap = new HashMap<>();
-    private Consumer<QTextCursor.MoveOperation> moveCursor;
+    private BiConsumer<QTextCursor, QTextCursor.MoveOperation> moveCursor;
 
     public final Signal1<Buffer> bufferClosed = new Signal1<>();
 
@@ -37,11 +37,10 @@ final public class Buffer extends QPlainTextEdit {
         keyMotionMap.put(Qt.Key.Key_B.value(), QTextCursor.MoveOperation.PreviousWord);
         keyMotionMap.put(Qt.Key.Key_0.value(), QTextCursor.MoveOperation.StartOfLine);
         keyMotionMap.put(Qt.Key.Key_Dollar.value(), QTextCursor.MoveOperation.EndOfLine);
-        //keyMotionMap.put(Qt.Key.Key_G.value(), QTextCursor.MoveOperation.StartOfLine);
         keyMotionMap.put(Qt.Key.Key_G.value(), QTextCursor.MoveOperation.End);
 
-        moveCursor = (QTextCursor.MoveOperation op) -> {
-            cursor.movePosition(op);
+        moveCursor = (QTextCursor crsr, QTextCursor.MoveOperation op) -> {
+            crsr.movePosition(op);
             setTextCursor(cursor);
         };
     }
@@ -74,7 +73,7 @@ final public class Buffer extends QPlainTextEdit {
                 // Edit/move shotcuts in Normal Mode
                 var moveOp = keyMotionMap.get(key);
                 if(moveOp != null){
-                    moveCursor(moveOp);
+                    moveCursor.accept(cursor, moveOp);
                 }
                 else if(key == Qt.Key.Key_X.value()) {
                     cursor.deleteChar();
