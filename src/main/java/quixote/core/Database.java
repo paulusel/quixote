@@ -14,7 +14,11 @@ final public class Database {
         }
         else {
             data_home = System.getenv("XDG_DATA_HOME");
-            data_home = data_home.isEmpty() ? System.getProperty("home") + "/.local/share/quixote" : data_home + "/quixote";
+            if (data_home == null || data_home.isEmpty()) {
+                data_home = System.getProperty("user.home") + "/.local/share/quixote";
+            } else {
+                data_home = data_home + "/quixote";
+            }
         }
 
         new File(data_home).mkdir();
