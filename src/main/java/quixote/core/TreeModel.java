@@ -1,34 +1,33 @@
 package quixote.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import io.qt.core.QAbstractItemModel;
 import io.qt.core.QModelIndex;
 import io.qt.core.Qt;
+import quixote.ui.App;
 
 public class TreeModel extends QAbstractItemModel {
-    private Notebook root = new Notebook(null, "", -1);
+    private Notebook root = new Notebook(null, "root", 1);
     private HashMap<Long, NoteItem> itemMap = new HashMap<>();
 
     public TreeModel(){
-        // FIXME: this is for testing should be replaced with real code that populates from storage
-        NoteItem item = new Note(root, "Test", "This is test note", 1);
-        root.addItem(item);
-        itemMap.put(Long.valueOf(item.hashCode()), item);
+        ArrayList<Notebook> que = new ArrayList<>();
+        que.add(root);
+        while(!que.isEmpty()){
+            var parnt = que.get(0);
+            que.remove(0);
 
-        item = new Notebook(root, "Testbook", 2);
-        root.addItem(item);
-        itemMap.put(Long.valueOf(item.hashCode()), item);
-
-        Notebook book = (Notebook)root.itemAt(1);
-
-        item = new Note(book, "TestNote", "Note 2", 3);
-        book.addItem(item);
-        itemMap.put(Long.valueOf(item.hashCode()), item);
-
-        item = new Note(book, "Note", "Another note", 4);
-        book.addItem(item);
-        itemMap.put(Long.valueOf(item.hashCode()), item);
+            var list = App.db.getItems(parnt);
+            for(NoteItem item : list){
+                parnt.addItem(item);
+                itemMap.put(Long.valueOf(item.hashCode()), item);
+                if(item instanceof Notebook){
+                    que.add((Notebook) item);
+                }
+            }
+        }
     }
 
     @Override

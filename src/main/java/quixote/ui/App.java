@@ -5,6 +5,9 @@ import quixote.core.*;
 import io.qt.gui.QAction;
 import io.qt.gui.QKeyEvent;
 import io.qt.widgets.*;
+
+import java.sql.SQLException;
+
 import io.qt.QtPrimitiveType;
 import io.qt.core.QEvent;
 import io.qt.core.Qt;
@@ -33,10 +36,18 @@ public class App extends QWidget {
         if(app != null)
             return;
 
-        QApplication.initialize(args);
-        QApplication.setCursorFlashTime(0);
-        app = new App();
-        db = new Database();
+        try{
+            QApplication.initialize(args);
+            QApplication.setCursorFlashTime(0);
+            db = new Database(); // This must be preceed new App()
+            app = new App();
+        }
+        catch(SQLException e){
+            System.out.println("FATAL: Unable to intialize database: " + e.getMessage());
+        }
+        catch(Exception e){
+            System.out.println("FATAL: Unknow error occurred: " + e.getMessage());
+        }
     }
 
     // constructors

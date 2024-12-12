@@ -15,12 +15,20 @@ public abstract class NoteItem {
         return title;
     }
 
+    public void title(String title){
+        this.title = title;
+    }
+
     public NoteItem parent(){
         return parent;
     }
 
     public int id(){
         return id;
+    }
+
+    public void id(int id){
+        this.id = id;
     }
 
     public int pos(){

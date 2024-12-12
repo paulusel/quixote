@@ -5,6 +5,7 @@ import quixote.core.Note;
 import java.util.HashMap;
 
 import io.qt.widgets.*;
+import io.qt.core.QTimer;
 
 final public class Editor extends QWidget {
 
@@ -24,6 +25,10 @@ final public class Editor extends QWidget {
         bufferLayout = new QStackedLayout();
         bufferContainer.setLayout(bufferLayout);
         this.layout().addWidget(bufferContainer);
+
+        QTimer timer = new QTimer(this);
+        timer.timeout.connect(this::save);
+        timer.start(10000);
     }
 
     public void newBuffer(Note note){
@@ -47,10 +52,23 @@ final public class Editor extends QWidget {
 
     public void reapBuffer(Buffer buffer) {
         buffers.remove(buffer.note());
+        saveWork(buffer);
 
         if(buffers.isEmpty())
             editorEmpty.emit();
         buffer.dispose();
+    }
+
+    public void saveWork(Buffer buffer){
+            if(!buffer.document().isModified())
+                return;
+            App.db.saveNote(buffer.note());
+            buffer.document().setModified(false);
+    }
+
+    public void save(){
+        for(Buffer buffer: buffers.values())
+            saveWork(buffer);
     }
 
     public boolean isEmpty(){
