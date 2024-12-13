@@ -83,6 +83,7 @@ public class App extends QWidget {
     public void stop() {
         mainWindow.hide();
         cleanup();
+        mainWindow.dispose();
         QApplication.quit();
     }
 
@@ -94,7 +95,8 @@ public class App extends QWidget {
     }
 
     private void cleanup(){
-        mainWindow.dispose();
+        editor.save();
+        db.shutdown();
     }
 
     private void switchView(){

@@ -67,6 +67,15 @@ final public class Database {
         stmnt.execute("INSERT INTO notebooks (name) VALUES ('root')");
     }
 
+    public void shutdown(){
+        try{
+            conn.close();
+        }
+        catch(SQLException e){
+            System.out.println("ERROR: Failed to properly shutdown database connection: " + e.getMessage());
+        }
+    }
+
     public ArrayList<NoteItem> getItems(Notebook parent){
         ArrayList<NoteItem> list = new ArrayList<>();
         try{
