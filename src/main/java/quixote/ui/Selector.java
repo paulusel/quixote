@@ -6,6 +6,7 @@ import quixote.core.TreeModel;
 
 import java.util.HashMap;
 
+import io.qt.core.QCoreApplication;
 import io.qt.core.QEvent;
 import io.qt.core.QModelIndex;
 import io.qt.core.Qt;
@@ -48,8 +49,8 @@ final public class Selector extends QTreeView {
                 collapse(currentIndex());
             }
             else if(parent.isValid()) {
-                collapse(parent);
                 setCurrentIndex(parent);
+                collapse(parent);
             }
         }
         else if(event.key() == Qt.Key.Key_L.value()) {
@@ -79,5 +80,16 @@ final public class Selector extends QTreeView {
         else{
             super.keyPressEvent(event);
         }
+    }
+
+    @Override
+    public boolean event(QEvent event){
+        if(event.type() == QEvent.Type.KeyPress){
+            QKeyEvent e = (QKeyEvent) event;
+            if(e.key() == Qt.Key.Key_Tab.value()) 
+                return QCoreApplication.sendEvent(App.app, e);
+        }
+
+        return super.event(event);
     }
 }

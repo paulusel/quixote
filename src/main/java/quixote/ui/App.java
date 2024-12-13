@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import io.qt.QtPrimitiveType;
 import io.qt.core.QEvent;
 import io.qt.core.Qt;
-import io.qt.core.QObject;
 
 public class App extends QWidget {
     public static App app;
@@ -21,6 +20,7 @@ public class App extends QWidget {
     private QWidget viewArea;
     private QStackedLayout layout; // layout manager for viewArrea
     private Editor editor;
+    private Selector selector;
     private Statusline statusline;
     private boolean normalMode = true;
 
@@ -66,7 +66,7 @@ public class App extends QWidget {
 
         // connect slot
         viewChanged.connect(layout::setCurrentIndex);
-        new Selector(viewArea);
+        selector = new Selector(viewArea);
         editor = new Editor(viewArea);
         editor.editorEmpty.connect(this::switchView);
 
@@ -114,7 +114,12 @@ public class App extends QWidget {
             }
             else if(key == key_tab){
                 // toggle selector/editor
-                viewChanged.emit((layout.currentIndex()+1)%2);
+                if(layout.currentWidget() == selector && ! editor.isEmpty()) {
+                    layout.setCurrentWidget(editor);
+                }
+                else if(layout.currentWidget() == editor){
+                    layout.setCurrentWidget(selector);
+                }
                 return true;
             }
             else if(key == key_i){
