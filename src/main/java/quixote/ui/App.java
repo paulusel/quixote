@@ -137,39 +137,4 @@ public class App extends QWidget {
 
         return super.event(e);
     }
-
-    @Override
-    public boolean eventFilter(QObject obj, QEvent event){
-        if(event.type() != QEvent.Type.KeyPress)
-            return false;
-
-        int key = ((QKeyEvent)event).key();
-
-        if(!normalMode){
-            if(key == key_esc){
-                // change to normal mode;
-                normalMode = true;
-                modeChanged.emit("NORMAL");
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-
-        if(key == key_i){
-            // change to insert mode
-            normalMode = false;
-            modeChanged.emit("INSERT");
-        }
-        else if(key == key_tab){
-            // toggle selector/editor
-            switchView();
-        }
-        else if(key == Qt.Key.Key_N.value()){
-            editor.showNext();
-        }
-
-        return true;
-    }
 }
