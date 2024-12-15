@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import io.qt.core.QAbstractItemModel;
+import io.qt.core.QList;
 import io.qt.core.QModelIndex;
 import io.qt.core.Qt;
 import quixote.ui.App;
@@ -83,6 +84,85 @@ public class TreeModel extends QAbstractItemModel {
     @Override
     public int columnCount(QModelIndex index){
         return 1;
+    }
+
+    @Override
+    public boolean setData(QModelIndex index, Object value, int role){
+        NoteItem item = (NoteItem) index.data(Qt.ItemDataRole.UserRole);
+        item.title(value.toString());
+        App.db.save(item);
+        dataChanged.emit(index, index, QList.of(1));
+
+        return true;
+    }
+
+    @Override
+    public Qt.ItemFlags flags(QModelIndex index){
+        return super.flags(index).combined(Qt.ItemFlag.ItemIsEditable);
+    }
+
+    @Override
+    public boolean removeRows(int row, int count, QModelIndex parent){
+        Notebook nbook = parent.isValid()
+            ? (Notebook) parent.data(Qt.ItemDataRole.UserRole)
+            : root;
+
+        beginRemoveRows(parent, row, row);
+
+        NoteItem item = nbook.itemAt(row);
+        itemMap.remove(Long.valueOf(item.hashCode()));
+        App.db.removeItem(item);
+        nbook.removeItemAt(row);
+
+        ArrayList<Notebook> que = new ArrayList<>();
+        if(item instanceof Notebook)
+            que.add((Notebook) item);
+        while(!que.isEmpty()){
+            var list = que.get(0).children();
+            que.remove(0);
+            for (NoteItem i : list){
+                //App.db.removeItem(i);
+                itemMap.remove(Long.valueOf(i.hashCode()));
+                if(i instanceof Notebook){
+                    que.add((Notebook) i);
+                }
+            }
+        }
+
+        endRemoveRows();
+
+        return true;
+    }
+
+    public QModelIndex addNote(QModelIndex parent){
+        Notebook nbook = parent.isValid()
+            ? (Notebook) parent.data(Qt.ItemDataRole.UserRole)
+            : root;
+
+        Note note = App.db.insertNote(nbook);
+
+        beginInsertRows(parent, 0, 0);
+        nbook.addItem(note, 0);
+        itemMap.put(Long.valueOf(note.hashCode()), note);
+        endInsertRows();
+
+        return index(0, 0, parent);
+    }
+
+    public QModelIndex addNotebook(QModelIndex parent){
+        Notebook nbook = parent.isValid()
+            ? (Notebook) parent.data(Qt.ItemDataRole.UserRole)
+            : root;
+
+        Notebook nb = App.db.insertNotebook(nbook);
+        int pos = rowCount(parent);
+
+        beginInsertRows(parent, pos, pos);
+        nbook.addItem(nb);
+        itemMap.put(Long.valueOf(nb.hashCode()), nb);
+        endInsertRows();
+
+        return index(pos, 0, parent);
     }
 }
 

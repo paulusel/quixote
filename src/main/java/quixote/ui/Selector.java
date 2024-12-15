@@ -2,6 +2,7 @@ package quixote.ui;
 
 import quixote.core.Note;
 import quixote.core.NoteItem;
+import quixote.core.Notebook;
 import quixote.core.TreeModel;
 
 import java.util.HashMap;
@@ -37,6 +38,13 @@ final public class Selector extends QTreeView {
 
     @Override
     public void keyPressEvent(QKeyEvent event){
+        if(state().value() == QAbstractItemView.State.EditingState.value()){
+            super.keyPressEvent(event);
+            return;
+        }
+
+        // FIXME: This if-else-fi chain too long.
+        // FIXME: Shortucuts should be more vim-like
         var indx = currentIndex();
         var e = motionMap.get(event.key());
         if(e != null){
@@ -77,8 +85,33 @@ final public class Selector extends QTreeView {
                 }
             }
         }
+        else if(event.key() == Qt.Key.Key_A.value()){
+            NoteItem item = (NoteItem) indx.data(Qt.ItemDataRole.UserRole);
+            QModelIndex parent = item instanceof Notebook ? indx : indx.parent();
+
+            var newIndex = model.addNote(parent);
+
+            setCurrentIndex(newIndex);
+            edit(newIndex);
+        }
+        else if(event.key() == Qt.Key.Key_N.value()){
+            NoteItem item = (NoteItem) indx.data(Qt.ItemDataRole.UserRole);
+            QModelIndex parent = item instanceof Notebook ? indx : indx.parent();
+
+            var newIndex= model.addNotebook(parent);
+
+            setCurrentIndex(newIndex);
+            edit(newIndex);
+        }
+        else if(event.key() == Qt.Key.Key_R.value()){
+            // start renaming notebook or note
+            edit(indx);
+        }
+        else if(event.key() == Qt.Key.Key_X.value()){
+            model().removeRow(indx.row(), indx.parent());
+        }
         else{
-            super.keyPressEvent(event);
+            event.accept();
         }
     }
 
