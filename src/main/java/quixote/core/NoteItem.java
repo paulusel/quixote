@@ -1,5 +1,7 @@
 package quixote.core;
 
+import java.util.Date;
+
 public abstract class NoteItem {
     protected Notebook parent;
     protected String title;
@@ -7,7 +9,9 @@ public abstract class NoteItem {
 
     protected NoteItem(Notebook parent, String title, int id){
         this.parent = parent;
-        this.title = title;
+        this.title = (title == null || title.isEmpty())
+            ? new Date().toString()
+            : title;
         this.id = id;
     }
 
@@ -19,7 +23,7 @@ public abstract class NoteItem {
         this.title = title;
     }
 
-    public NoteItem parent(){
+    public Notebook parent(){
         return parent;
     }
 
