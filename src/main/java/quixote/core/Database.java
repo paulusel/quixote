@@ -67,6 +67,57 @@ final public class Database {
         stmnt.execute("INSERT INTO notebooks (name) VALUES ('root')");
     }
 
+    public Note insertNote(Notebook nb){
+        Note note = new Note(nb, "New note", "", 1);
+        try{
+            var stmnt = conn.prepareStatement("INSERT INTO notes (title, parent) VALUES (?, ?)");
+            stmnt.setString(1, note.title());
+            stmnt.setInt(2, note.parent().id());
+            stmnt.execute();
+            ResultSet result = conn.createStatement().executeQuery("SELECT last_insert_rowid()");
+            result.next();
+            note.id(result.getInt(1));
+        }
+        catch(SQLException e){
+            System.out.println("ERROR: Failed to insert note. " + e.getMessage());
+        }
+
+        return note;
+    }
+
+    public Notebook insertNotebook(Notebook nb){
+        Notebook nbook = new Notebook(nb, "New notebook", 1);
+        try {
+            var stmnt = conn.prepareStatement("INSERT INTO notebooks (name, parent) VALUES (?, ?)");
+            stmnt.setString(1, nbook.title());
+            stmnt.setInt(2, nbook.parent().id());
+            stmnt.execute();
+            //exec("SELECT last_insert_rowid()");
+            ResultSet result = conn.createStatement().executeQuery("SELECT last_insert_rowid()");
+            result.next();
+            nbook.id(result.getInt(1));
+        }
+        catch(SQLException e){
+            System.out.println("ERROR: Failed to insert notebook. " + e.getMessage());
+        }
+
+        return nbook;
+    }
+
+    public void removeItem(NoteItem item){
+        try{
+            String query = item instanceof Note
+                ? "DELETE FROM notes WHERE id = ?"
+                : "DELETE FROM notebooks WHERE id = ?";
+            var stmnt = conn.prepareStatement(query);
+            stmnt.setInt(1, item.id());
+            stmnt.execute();
+        }
+        catch(SQLException e){
+            System.out.println("ERROR: Failed to delete item. " + e.getMessage());
+        }
+    }
+
     public void shutdown(){
         try{
             conn.close();
