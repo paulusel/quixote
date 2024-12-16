@@ -148,8 +148,12 @@ public class TreeModel extends QAbstractItemModel {
         // Begin moving
         //
         // FIXME: For now count and destRow are ignored, assuming only one count and beginning/end
-        Notebook srcBook = (Notebook) srcParent.data(Qt.ItemDataRole.UserRole);
-        Notebook destBook = (Notebook) destParent.data(Qt.ItemDataRole.UserRole);
+        Notebook srcBook = srcParent.isValid()
+            ? (Notebook) srcParent.data(Qt.ItemDataRole.UserRole)
+            : root;
+        Notebook destBook = destParent.isValid()
+            ? (Notebook) destParent.data(Qt.ItemDataRole.UserRole)
+            : root;
 
         NoteItem item = srcBook.itemAt(srcRow);
         srcBook.removeItemAt(srcRow);
