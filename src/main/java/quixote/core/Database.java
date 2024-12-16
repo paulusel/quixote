@@ -11,7 +11,7 @@ final public class Database {
     private String mkdir(){
         String data_home;
         if(System.getProperty("os.name").equalsIgnoreCase("Windows")){
-            data_home = System.getenv("APPDATA") + "\\quixote";
+            data_home = System.getenv("APPDATA") + File.separator + "quixote";
         }
         else {
             data_home = System.getenv("XDG_DATA_HOME");

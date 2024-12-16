@@ -17,6 +17,7 @@ import io.qt.widgets.*;
 final public class Selector extends QTreeView {
     TreeModel model = new TreeModel();
     HashMap<Integer, QKeyEvent> motionMap = new HashMap<>();
+    QModelIndex yankedIndex;
 
     public Selector(QWidget parent){
         super(parent);
@@ -49,7 +50,6 @@ final public class Selector extends QTreeView {
         var e = motionMap.get(event.key());
         if(e != null){
             super.keyPressEvent(e);
-            event.accept();
         }
         else if(event.key() == Qt.Key.Key_H.value()){
             var parent = indx.parent();
@@ -110,9 +110,24 @@ final public class Selector extends QTreeView {
         else if(event.key() == Qt.Key.Key_X.value()){
             model().removeRow(indx.row(), indx.parent());
         }
-        else{
-            event.accept();
+        else if(event.key() == Qt.Key.Key_D.value()){
+            System.out.println("Yanked the current index");
+            yankedIndex = indx;
         }
+        else if(event.key() == Qt.Key.Key_P.value()){
+            if(yankedIndex != null){
+                QModelIndex destParent = indx.data(Qt.ItemDataRole.UserRole) instanceof Notebook
+                    ? indx
+                    : indx.parent();
+
+                model().moveRows(yankedIndex.parent(), yankedIndex.row(), 1, destParent, 0);
+                expand(destParent);
+                setCurrentIndex(model().index(0, 0, destParent));
+                System.out.println("Moved");
+            }
+        }
+
+        event.accept();
     }
 
     @Override

@@ -7,6 +7,7 @@ import io.qt.core.QAbstractItemModel;
 import io.qt.core.QList;
 import io.qt.core.QModelIndex;
 import io.qt.core.Qt;
+
 import quixote.ui.App;
 
 public class TreeModel extends QAbstractItemModel {
@@ -72,7 +73,12 @@ public class TreeModel extends QAbstractItemModel {
     @Override
     public Object data(QModelIndex index, int role){
         if(role == Qt.ItemDataRole.DisplayRole){
-            return itemMap.get(index.internalId()).title();
+            if(index.isValid()){
+                return itemMap.get(index.internalId()).title();
+            }
+            else{
+                return root;
+            }
         }
         else if(role == Qt.ItemDataRole.UserRole) {
             return itemMap.get(index.internalId());
@@ -108,6 +114,7 @@ public class TreeModel extends QAbstractItemModel {
             : root;
 
         beginRemoveRows(parent, row, row);
+        // Begin removing
 
         NoteItem item = nbook.itemAt(row);
         itemMap.remove(Long.valueOf(item.hashCode()));
@@ -129,8 +136,35 @@ public class TreeModel extends QAbstractItemModel {
             }
         }
 
+        // End removing
         endRemoveRows();
 
+        return true;
+    }
+
+    @Override
+    public boolean moveRows(QModelIndex srcParent, int srcRow, int count, QModelIndex destParent, int destRow){
+        beginMoveRows(srcParent, srcRow, srcRow+count-1, destParent, destRow);
+        // Begin moving
+        //
+        // FIXME: For now count and destRow are ignored, assuming only one count and beginning/end
+        Notebook srcBook = (Notebook) srcParent.data(Qt.ItemDataRole.UserRole);
+        Notebook destBook = (Notebook) destParent.data(Qt.ItemDataRole.UserRole);
+
+        NoteItem item = srcBook.itemAt(srcRow);
+        srcBook.removeItemAt(srcRow);
+        item.parent(destBook);
+        App.db.save(item);
+
+        if(item instanceof Note){
+            destBook.children().add(0, item);
+        }
+        else{
+            destBook.children().add(item);
+        }
+
+        // End moving
+        endMoveRows();
         return true;
     }
 
@@ -142,8 +176,12 @@ public class TreeModel extends QAbstractItemModel {
         Note note = App.db.insertNote(nbook);
 
         beginInsertRows(parent, 0, 0);
+        // Begin inserting
+
         nbook.addItem(note, 0);
         itemMap.put(Long.valueOf(note.hashCode()), note);
+
+        // End inserting
         endInsertRows();
 
         return index(0, 0, parent);
@@ -158,8 +196,12 @@ public class TreeModel extends QAbstractItemModel {
         int pos = rowCount(parent);
 
         beginInsertRows(parent, pos, pos);
+        // Begin inserting
+
         nbook.addItem(nb);
         itemMap.put(Long.valueOf(nb.hashCode()), nb);
+
+        // End inserting
         endInsertRows();
 
         return index(pos, 0, parent);

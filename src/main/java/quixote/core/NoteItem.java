@@ -27,6 +27,12 @@ public abstract class NoteItem {
         return parent;
     }
 
+    public void parent(Notebook parent){
+        if(parent == null)
+            return;
+        this.parent = parent;
+    }
+
     public int id(){
         return id;
     }
