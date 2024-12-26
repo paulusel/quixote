@@ -1,11 +1,15 @@
 package quixote.ui;
 
 import quixote.core.Note;
+import quixote.core.Notebook;
 
 import java.util.HashMap;
+import java.util.List;
 
 import io.qt.widgets.*;
+import io.qt.core.QModelIndex;
 import io.qt.core.QTimer;
+import io.qt.core.Qt;
 
 final public class Editor extends QWidget {
 
@@ -77,6 +81,20 @@ final public class Editor extends QWidget {
 
     public void showNext(){
         bufferLayout.setCurrentIndex((bufferLayout.currentIndex()+1)%bufferLayout.count());
+    }
+
+    public void itemEdited(QModelIndex first, QModelIndex last, List<Integer> roles){
+        Object item = first.data(Qt.ItemDataRole.UserRole);
+        if(item instanceof Notebook) {
+            return;
+        }
+
+        Buffer buffer = buffers.get((Note) item);
+        if(buffer == null) {
+            return;
+        }
+
+        buffer.refreshName();
     }
 
     public void showPrev(){

@@ -21,8 +21,7 @@ public class TreeModel extends QAbstractItemModel {
             var parnt = que.get(0);
             que.remove(0);
 
-            var list = App.db.getItems(parnt);
-            for(NoteItem item : list){
+            for(NoteItem item : App.db.getItems(parnt)){
                 parnt.addItem(item);
                 itemMap.put(Long.valueOf(item.hashCode()), item);
                 if(item instanceof Notebook){
@@ -147,7 +146,7 @@ public class TreeModel extends QAbstractItemModel {
         beginMoveRows(srcParent, srcRow, srcRow+count-1, destParent, destRow);
         // Begin moving
         //
-        // FIXME: For now count and destRow are ignored, assuming only one count and beginning/end
+        // HACK: For now count and destRow are ignored, assuming only one count and beginning/end
         Notebook srcBook = srcParent.isValid()
             ? (Notebook) srcParent.data(Qt.ItemDataRole.UserRole)
             : root;

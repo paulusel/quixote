@@ -69,7 +69,7 @@ public class App extends QWidget {
         selector = new Selector(viewArea);
         editor = new Editor(viewArea);
         editor.editorEmpty.connect(this::switchView);
-
+        selector.model().dataChanged.connect(editor::itemEdited);
         mainWindow.setLayout(new QVBoxLayout());
         mainWindow.layout().addWidget(viewArea);
         statusline = new Statusline(mainWindow, this);

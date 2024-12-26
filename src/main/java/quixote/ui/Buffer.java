@@ -51,6 +51,10 @@ final public class Buffer extends QPlainTextEdit {
         return tab;
     }
 
+    public void refreshName(){
+        tab.setText(note.title());
+    }
+
     @Override
     public boolean event(QEvent e){
          if (e.type() == QEvent.Type.KeyPress) {
