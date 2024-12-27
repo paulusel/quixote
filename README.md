@@ -1,7 +1,7 @@
 ## Quixote
 Quixote is quick note and to-do list app with strong emphasis on simplicity and keyboard navigation
 #### Building from source
-You will need to install [QT](https://www.qt.io) and [maven](https://maven.apache.org)
+You will need to install [QT](https://www.qt.io) and [gradle](https://gradle.org/)
 
 With those installed, clone this repo and issue maven build command, like so.
 ```
