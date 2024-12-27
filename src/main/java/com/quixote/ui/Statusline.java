@@ -1,4 +1,4 @@
-package quixote.ui;
+package com.quixote.ui;
 
 import io.qt.widgets.*;
 

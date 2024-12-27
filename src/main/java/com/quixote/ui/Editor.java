@@ -1,7 +1,7 @@
-package quixote.ui;
+package com.quixote.ui;
 
-import quixote.core.Note;
-import quixote.core.Notebook;
+import com.quixote.core.Note;
+import com.quixote.core.Notebook;
 
 import java.util.HashMap;
 import java.util.List;

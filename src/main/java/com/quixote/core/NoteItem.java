@@ -1,4 +1,4 @@
-package quixote.core;
+package com.quixote.core;
 
 import java.util.Date;
 

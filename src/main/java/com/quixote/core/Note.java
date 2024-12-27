@@ -1,4 +1,4 @@
-package quixote.core;
+package com.quixote.core;
 
 import io.qt.gui.QTextDocument;
 import io.qt.widgets.QPlainTextDocumentLayout;

@@ -1,6 +1,6 @@
-package quixote.ui;
+package com.quixote.ui;
 
-import quixote.core.*;
+import com.quixote.core.*;
 
 import io.qt.gui.QAction;
 import io.qt.gui.QKeyEvent;

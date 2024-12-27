@@ -1,9 +1,6 @@
-package quixote.ui;
+package com.quixote.ui;
 
-import quixote.core.Note;
-import quixote.core.NoteItem;
-import quixote.core.Notebook;
-import quixote.core.TreeModel;
+import com.quixote.core.*;
 
 import java.util.HashMap;
 

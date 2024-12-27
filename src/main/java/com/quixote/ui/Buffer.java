@@ -1,6 +1,6 @@
-package quixote.ui;
+package com.quixote.ui;
 
-import quixote.core.*;
+import com.quixote.core.*;
 
 import java.util.HashMap;
 

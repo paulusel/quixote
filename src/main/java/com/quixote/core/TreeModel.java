@@ -1,4 +1,6 @@
-package quixote.core;
+package com.quixote.core;
+
+import com.quixote.ui.App;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,8 +9,6 @@ import io.qt.core.QAbstractItemModel;
 import io.qt.core.QList;
 import io.qt.core.QModelIndex;
 import io.qt.core.Qt;
-
-import quixote.ui.App;
 
 public class TreeModel extends QAbstractItemModel {
     private Notebook root = new Notebook(null, "root", 1);
