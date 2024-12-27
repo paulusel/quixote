@@ -64,15 +64,16 @@ public class App extends QWidget {
         layout = new QStackedLayout();
         viewArea.setLayout(layout);
 
-        // connect slot
-        viewChanged.connect(layout::setCurrentIndex);
         selector = new Selector(viewArea);
         editor = new Editor(viewArea);
-        editor.editorEmpty.connect(this::switchView);
-        selector.model().dataChanged.connect(editor::itemEdited);
         mainWindow.setLayout(new QVBoxLayout());
         mainWindow.layout().addWidget(viewArea);
         statusline = new Statusline(mainWindow, this);
+
+        // connect slots
+        viewChanged.connect(layout::setCurrentIndex);
+        editor.editorEmpty.connect(this::switchView);
+        selector.model().dataChanged.connect(editor::itemEdited);
     }
 
     public void start() {
