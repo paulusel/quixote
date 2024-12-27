@@ -1,0 +1,58 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.graalvm.buildtools.native' version '0.9.28' // GraalVM Native Image plugin
+}
+
+group 'quixote'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    implementation 'io.qtjambi:qtjambi:6.8.1'
+    implementation 'org.xerial:sqlite-jdbc:3.47.0.0'
+
+    // Platform-specific native dependencies
+    if (System.getProperty('os.name').toLowerCase().contains('mac')) {
+        implementation 'io.qtjambi:qtjambi-native-macos:6.8.1'
+    } else if (System.getProperty('os.name').toLowerCase().contains('linux')) {
+        implementation 'io.qtjambi:qtjambi-native-linux-x64:6.8.1'
+    } else if (System.getProperty('os.name').toLowerCase().contains('windows')) {
+        implementation 'io.qtjambi:qtjambi-native-windows-x64:6.8.1'
+    }
+}
+
+application {
+    mainClass = 'quixote.Main'
+}
+
+graalvmNative {
+    binaries {
+        main {
+            buildArgs.add('-Dorg.sqlite.lib.exportPath=' + buildDir)
+        }
+    }
+}
+
+run {
+    // Platform-specific configurations
+    if (System.getProperty('os.name').toLowerCase().contains('mac')) {
+        jvmArgs = [
+            '-XstartOnFirstThread',
+            '-Djava.library.path=/Library/Qt/6.8.0/macos/lib'
+        ]
+        environment 'QT_QPA_PLATFORM_PLUGIN_PATH', '/Library/Qt/6.8.0/macos/plugins/platforms'
+    } else if (System.getProperty('os.name').toLowerCase().contains('windows')) {
+        jvmArgs = [
+            '-Djava.library.path=C:\\Qt\\6.8.1\\msvc2022_64\\bin'
+        ]
+    }
+}
+
+tasks.run {
+    outputs.upToDateWhen { false }
+}

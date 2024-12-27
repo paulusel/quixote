@@ -7,12 +7,12 @@ With those installed, clone this repo and issue maven build command, like so.
 ```
 git clone https://github.com/paulusel/quixote
 cd quixote
-mvn compile
+gradle build
 ```
 
 Runnable packages or executables are not provided for the moment. But compiled classes
-could be run with exec plugin of maven.
+could be run with gradle.
 
 ```
-mvn exec:java
+gradle run
 ```
