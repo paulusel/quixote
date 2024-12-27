@@ -1,11 +1,12 @@
 plugins {
     id 'java'
+    id 'eclipse'
     id 'application'
     id 'org.graalvm.buildtools.native' version '0.9.28' // GraalVM Native Image plugin
 }
 
-group 'quixote'
-version '1.0-SNAPSHOT'
+group 'com.quixote'
+version '0.1.0'
 
 repositories {
     mavenCentral()
@@ -27,7 +28,7 @@ dependencies {
 }
 
 application {
-    mainClass = 'quixote.Main'
+    mainClass = 'com.quixote.Main'
 }
 
 graalvmNative {
