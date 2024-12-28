@@ -12,7 +12,11 @@ import io.qt.QtPrimitiveType;
 import io.qt.core.QEvent;
 import io.qt.core.Qt;
 
+
 public class App extends QWidget {
+
+    public enum Mode {NORMAL, INSERT};
+
     public static App app;
     public static Database db;
 
@@ -22,11 +26,11 @@ public class App extends QWidget {
     private Editor editor;
     private Selector selector;
     private Statusline statusline;
-    private boolean normalMode = true;
+    private Mode mode = Mode.NORMAL;
 
     // signals
     public final Signal1<@QtPrimitiveType Integer> viewChanged = new Signal1<>();
-    public final Signal1<String> modeChanged = new Signal1<>();
+    public final Signal1<Mode> modeChanged = new Signal1<>();
 
     private static final int key_esc = Qt.Key.Key_Escape.value();
     private static final int key_i = Qt.Key.Key_I.value();
@@ -89,8 +93,8 @@ public class App extends QWidget {
     }
 
     public void openNote(Note note){
-        normalMode = false;
-        modeChanged.emit("INSERT");
+        mode = Mode.INSERT;
+        modeChanged.emit(mode);
         editor.newBuffer(note);
         switchView();
     }
@@ -109,9 +113,9 @@ public class App extends QWidget {
          if(e.type() == QEvent.Type.KeyPress){
             int key = ((QKeyEvent)e).key();
             if(key == key_esc){
-                if(!normalMode){
-                    normalMode = true;
-                    modeChanged.emit("NORMAL");
+                if(mode == Mode.INSERT){
+                    mode = Mode.NORMAL;
+                    modeChanged.emit(mode);
                     return true;
                 }
             }
@@ -127,8 +131,8 @@ public class App extends QWidget {
             }
             else if(key == key_i){
                 // change to insert mode
-                normalMode = false;
-                modeChanged.emit("INSERT");
+                mode = Mode.INSERT;
+                modeChanged.emit(mode);
                 return true;
             }
             // FIXME -- Perhaps N is not the right shortcut?

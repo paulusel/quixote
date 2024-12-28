@@ -3,7 +3,7 @@ package com.quixote.ui;
 import io.qt.widgets.*;
 
 final public class Statusline extends QStatusBar {
-    private QLabel mode;
+    private QLabel modeLabel;
 
     public Statusline(QWidget parent, App app){
         super(parent);
@@ -11,12 +11,13 @@ final public class Statusline extends QStatusBar {
         parent.layout().addWidget(this);
         app.modeChanged.connect(this::setMode);
 
-        mode = new QLabel();
-        setMode("NORMAL");
-        this.addWidget(mode);
+        modeLabel = new QLabel();
+        setMode(App.Mode.NORMAL);
+        this.addPermanentWidget(modeLabel);
+        this.setStyleSheet("max-height: 15px;min-height: 15px;");
     }
 
-    public void setMode(String mode){
-        this.mode.setText(mode);
+    public void setMode(App.Mode mode){
+        this.modeLabel.setText(mode.toString());
     }
 }

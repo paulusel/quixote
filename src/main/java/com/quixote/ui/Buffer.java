@@ -14,7 +14,7 @@ import io.qt.widgets.*;
 final public class Buffer extends QPlainTextEdit {
     private Note note;
     private QLabel tab;
-    private boolean insertMode = true;
+    private App.Mode mode = App.Mode.INSERT;
     private QTextCursor cursor;
     private HashMap<Integer, QTextCursor.MoveOperation> keyMotionMap = new HashMap<>();
 
@@ -59,7 +59,7 @@ final public class Buffer extends QPlainTextEdit {
     public boolean event(QEvent e){
          if (e.type() == QEvent.Type.KeyPress) {
             int key = ((QKeyEvent) e).key();
-            if (insertMode) {
+            if (mode == App.Mode.INSERT) {
                 if (key != Qt.Key.Key_Escape.value()) {
                     super.event(e);
                 }
@@ -92,13 +92,12 @@ final public class Buffer extends QPlainTextEdit {
         return super.event(e);
     }
 
-    public void changeMode(String mode){
-        if(mode.equals("INSERT")){
-            insertMode = true;
+    public void changeMode(App.Mode mod){
+        this.mode = mod;
+        if(mod == App.Mode.INSERT){
             setCursorWidth(1);
         }
         else {
-            insertMode = false;
             setCursorWidth(8);
         }
     }
