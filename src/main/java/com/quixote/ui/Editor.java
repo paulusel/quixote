@@ -10,6 +10,7 @@ import io.qt.widgets.*;
 import io.qt.core.QModelIndex;
 import io.qt.core.QTimer;
 import io.qt.core.Qt;
+import io.qt.gui.QKeyEvent;
 
 final public class Editor extends QWidget {
 
@@ -17,6 +18,7 @@ final public class Editor extends QWidget {
 
     private Tabline tabline;
     private QStackedLayout bufferLayout;
+    private QWidget bufferContainer;
     private HashMap<Note, Buffer> buffers = new HashMap<>();
 
     public Editor(QWidget parent){
@@ -25,7 +27,7 @@ final public class Editor extends QWidget {
 
         this.setLayout(new QVBoxLayout());
         tabline = new Tabline(this);
-        QWidget bufferContainer = new QWidget(this);
+        bufferContainer = new QWidget(this);
         bufferLayout = new QStackedLayout();
         bufferContainer.setLayout(bufferLayout);
         this.layout().addWidget(bufferContainer);
@@ -43,9 +45,8 @@ final public class Editor extends QWidget {
             return;
         }
 
-        buffer = new Buffer(note);
+        buffer = new Buffer(bufferContainer, note);
         tabline.newTab(buffer.tab());
-        App.app.modeChanged.connect(buffer::changeMode);
         buffer.bufferClosed.connect(this::reapBuffer);
 
         bufferLayout.addWidget(buffer);
@@ -103,5 +104,17 @@ final public class Editor extends QWidget {
 
     public void show(int offset){
 
+    }
+
+    @Override
+    public void keyPressEvent(QKeyEvent event){
+        int key = event.key();
+        if(key == Qt.Key.Key_N.value()){
+            showNext();
+            event.accept();
+        }
+        else {
+            event.ignore();
+        }
     }
 }
