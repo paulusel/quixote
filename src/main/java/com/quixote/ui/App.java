@@ -134,6 +134,7 @@ public class App extends QWidget {
         else if(layout.currentWidget() == editor){
             layout.setCurrentWidget(selector);
             hLayout.setCurrentWidget(selector.header);
+            selector.setFocus();
         }
     }
 

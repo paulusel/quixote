@@ -63,10 +63,10 @@ final public class Editor extends QWidget {
     public void reapBuffer(Buffer buffer) {
         buffers.remove(buffer.note());
         saveWork(buffer);
+        showPrev();
 
         if(buffers.isEmpty())
             editorEmpty.emit();
-        buffer.dispose();
     }
 
     public void saveWork(Buffer buffer){

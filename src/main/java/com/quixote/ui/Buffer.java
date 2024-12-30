@@ -61,8 +61,9 @@ final public class Buffer extends QPlainTextEdit {
     }
 
     public void closeBuffer(){
-        tab.dispose();
         bufferClosed.emit(this);
+        tab.dispose();
+        dispose();
     }
 
     public void focus(){
