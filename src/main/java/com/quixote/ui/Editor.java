@@ -16,17 +16,18 @@ final public class Editor extends QWidget {
 
     final public Signal0 editorEmpty = new Signal0();
 
-    private Tabline tabline;
+    final public Tabline header;
+
     private QStackedLayout bufferLayout;
     private QWidget bufferContainer;
     private HashMap<Note, Buffer> buffers = new HashMap<>();
 
     public Editor(QWidget parent){
         super(parent);
-        parent.layout().addWidget(this);
+
+        header = new Tabline(this);
 
         this.setLayout(new QVBoxLayout());
-        tabline = new Tabline(this);
         bufferContainer = new QWidget(this);
         bufferLayout = new QStackedLayout();
         bufferContainer.setLayout(bufferLayout);
@@ -46,7 +47,7 @@ final public class Editor extends QWidget {
         }
 
         buffer = new Buffer(bufferContainer, note);
-        tabline.newTab(buffer.tab());
+        header.newTab(buffer.tab());
         buffer.bufferClosed.connect(this::reapBuffer);
 
         bufferLayout.addWidget(buffer);

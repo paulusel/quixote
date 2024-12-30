@@ -12,14 +12,17 @@ import io.qt.gui.QKeyEvent;
 import io.qt.widgets.*;
 
 final public class Selector extends QTreeView {
-    TreeModel model = new TreeModel();
-    HashMap<Integer, QKeyEvent> motionMap = new HashMap<>();
-    QModelIndex yankedIndex;
+    private TreeModel model = new TreeModel();
+    private HashMap<Integer, QKeyEvent> motionMap = new HashMap<>();
+    private QModelIndex yankedIndex;
+
+    public QWidget header;
 
     public Selector(QWidget parent){
         super(parent);
 
-        parent.layout().addWidget(this);
+        header = new QWidget(this);
+        new QHBoxLayout(header).addWidget(new QLabel("Notes", header));
 
         this.setModel(model);
         this.setHeaderHidden(true);

@@ -7,17 +7,16 @@ final public class Statusline extends QStatusBar {
     private QLabel cmdline;
     public static Statusline line;
 
-    public static void init(QWidget parent, App app){
+    public static void init(QWidget parent){
         if(line != null){
             return;
         }
 
-        line = new Statusline(parent, app);
+        line = new Statusline(parent);
     }
 
-    private Statusline(QWidget parent, App app){
+    private Statusline(QWidget parent){
         super(parent);
-        parent.layout().addWidget(this);
 
         modeLabel = new QLabel(this);
         setMode(App.Mode.NORMAL);

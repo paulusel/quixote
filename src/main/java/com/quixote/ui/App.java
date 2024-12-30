@@ -5,7 +5,6 @@ import com.quixote.core.*;
 import io.qt.gui.QAction;
 import io.qt.gui.QKeyEvent;
 import io.qt.widgets.*;
-import io.qt.QtPrimitiveType;
 import io.qt.core.QEvent;
 import io.qt.core.Qt;
 
@@ -18,14 +17,18 @@ public class App extends QWidget {
     public static App app;
     public static Database db;
 
-    private QWidget mainWindow;
     private QWidget viewArea;
+    private QWidget header;
+    private QStackedLayout hLayout;
     private QStackedLayout layout; // layout manager for viewArrea
     private Editor editor;
     private Selector selector;
 
-    // signals
-    public final Signal1<@QtPrimitiveType Integer> viewChanged = new Signal1<>();
+    final private String stylesheet = """
+            * {
+                background: #1A1B26;
+            }
+    """;
 
     private static final int key_tab = Qt.Key.Key_Tab.value();
 
@@ -41,49 +44,78 @@ public class App extends QWidget {
         }
         catch(SQLException e){
             System.out.println("FATAL: Unable to intialize database: " + e.getMessage());
+            e.printStackTrace();
             System.exit(1);
         }
         catch(Exception e){
             System.out.println("FATAL: Unknow error occurred: " + e.getMessage());
+            e.printStackTrace();
             System.exit(1);
         }
     }
 
     // constructors
     private App(){
-        mainWindow = new QWidget();
-        mainWindow.setWindowTitle("Quixote");
+        this.setWindowTitle("Quixote");
+        this.setStyleSheet(stylesheet);
 
+        var blayout = new QVBoxLayout(this);
+        blayout.setSpacing(0);
+
+        // header
+        header = new QWidget(this);
+        hLayout = new QStackedLayout(header);
+        //header.setStyleSheet("border: 1px solid white;border-top-right-radius: 2px;border-top-left-radius: 2px;");
+
+        // View Area
+        viewArea = new QWidget(this);
+        layout = new QStackedLayout(viewArea);
+        //viewArea.setStyleSheet("border-left: 1px solid white;border-right: 1px solid white;");
+
+        // Statusline
+        Statusline.init(this);
+        //Statusline.line.setStyleSheet("border: 1px solid white;border-bottom-right-radius: 2px;border-bottom-left-radius: 2px;");
+
+        // view Area elements
+        selector = new Selector(viewArea);
+        editor = new Editor(viewArea);
+        viewArea.layout().addWidget(selector);
+        viewArea.layout().addWidget(editor);
+
+        // header elements
+        header.layout().addWidget(selector.header);
+        header.layout().addWidget(editor.header);
+
+        // Add it all to the app
+        this.layout().addWidget(header);
+        this.layout().addWidget(viewArea);
+        this.layout().addWidget(Statusline.line);
+
+        blayout.setStretch(0, 0); // header (no stretch)
+        blayout.setStretch(1, 1); // ViewArea (takes remaining space)
+        blayout.setStretch(2, 0); // statusline (no stretch)
+
+
+        // connect slots
+        editor.editorEmpty.connect(this::switchView);
+        selector.model().dataChanged.connect(editor::itemEdited);
+
+        // Quit shortcut
         var quitAction = new QAction();
         quitAction.setShortcut("CTRL+Q");
         quitAction.triggered.connect(this::stop);
-        mainWindow.addAction(quitAction);
-
-        viewArea = new QWidget();
-        layout = new QStackedLayout();
-        viewArea.setLayout(layout);
-
-        selector = new Selector(viewArea);
-        editor = new Editor(viewArea);
-        mainWindow.setLayout(new QVBoxLayout());
-        mainWindow.layout().addWidget(viewArea);
-        Statusline.init(mainWindow, this);
-
-        // connect slots
-        viewChanged.connect(layout::setCurrentIndex);
-        editor.editorEmpty.connect(this::switchView);
-        selector.model().dataChanged.connect(editor::itemEdited);
+        this.addAction(quitAction);
     }
 
     public void start() {
-        mainWindow.show();
+        this.show();
         QApplication.exec();
     }
 
     public void stop() {
-        mainWindow.hide();
+        this.hide();
         cleanup();
-        mainWindow.dispose();
+        this.dispose();
         QApplication.quit();
     }
 
@@ -100,9 +132,11 @@ public class App extends QWidget {
     private void switchView(){
         if(layout.currentWidget() == selector && ! editor.isEmpty()) {
             layout.setCurrentWidget(editor);
+            hLayout.setCurrentWidget(editor.header);
         }
         else if(layout.currentWidget() == editor){
             layout.setCurrentWidget(selector);
+            hLayout.setCurrentWidget(selector.header);
         }
     }
 
@@ -113,12 +147,12 @@ public class App extends QWidget {
             if(key == key_tab){
                 // toggle selector/editor
                switchView();
-               return true;
             }
-            else {
-                // HACK: better event propagation up the parent-child line is needed
-                return QApplication.sendEvent(editor, e);
+            else if(key == Qt.Key.Key_N.value()) {
+                editor.showNext();
             }
+
+            return true;
         }
 
         return super.event(e);
