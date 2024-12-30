@@ -44,12 +44,33 @@ final public class Selector extends QTreeView {
             return;
         }
 
-        // FIXME: This if-else-fi chain too long.
-        // FIXME: Shortucuts should be more vim-like
+
+
         var indx = currentIndex();
         var e = motionMap.get(event.key());
         if(e != null){
             super.keyPressEvent(e);
+            return;
+        }
+        else if(event.key() == Qt.Key.Key_P.value()){
+            if(yankedIndex != null){
+                QModelIndex destParent = indx.data(Qt.ItemDataRole.UserRole) instanceof Notebook
+                    ? indx
+                    : indx.parent();
+
+                model().moveRows(yankedIndex.parent(), yankedIndex.row(), 1, destParent, 0);
+                expand(destParent);
+                setCurrentIndex(model().index(0, 0, destParent));
+                yankedIndex = null;
+            }
+            return;
+        }
+
+        // FIXME: This if-else-fi chain too long.
+        // FIXME: Shortucuts should be more vim-like
+        if(yankedIndex != null){
+            Statusline.line.displayMsg("Aborted move", 2000);
+            yankedIndex = null;
             return;
         }
         else if(event.key() == Qt.Key.Key_H.value()){
@@ -87,6 +108,8 @@ final public class Selector extends QTreeView {
             }
         }
         else if(event.key() == Qt.Key.Key_A.value()){
+            // Add new Note
+            // FIXME: BUG:- If addition is aborted, the new item stays. It should be removed
             NoteItem item = (NoteItem) indx.data(Qt.ItemDataRole.UserRole);
             QModelIndex parent = item instanceof Notebook ? indx : indx.parent();
 
@@ -96,6 +119,8 @@ final public class Selector extends QTreeView {
             edit(newIndex);
         }
         else if(event.key() == Qt.Key.Key_N.value()){
+            // Add new Notebook
+            // FIXME: BUG:- If addition is aborted, the new item stays. It should be removed
             NoteItem item = (NoteItem) indx.data(Qt.ItemDataRole.UserRole);
             QModelIndex parent = item instanceof Notebook ? indx : indx.parent();
 
@@ -113,21 +138,10 @@ final public class Selector extends QTreeView {
         }
         else if(event.key() == Qt.Key.Key_D.value()){
             yankedIndex = indx;
+            Statusline.line.displayMsg("Moving item ...", 2000);
             return;
         }
-        else if(event.key() == Qt.Key.Key_P.value()){
-            if(yankedIndex != null){
-                QModelIndex destParent = indx.data(Qt.ItemDataRole.UserRole) instanceof Notebook
-                    ? indx
-                    : indx.parent();
 
-                model().moveRows(yankedIndex.parent(), yankedIndex.row(), 1, destParent, 0);
-                expand(destParent);
-                setCurrentIndex(model().index(0, 0, destParent));
-            }
-        }
-
-        yankedIndex = null;
         event.accept();
     }
 
