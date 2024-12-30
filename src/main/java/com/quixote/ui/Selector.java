@@ -44,7 +44,11 @@ final public class Selector extends QTreeView {
             return;
         }
 
+        // We accept all key-strokes in normal mode
+        event.accept();
 
+        // FIXME: This if-else-fi chain too long.
+        // FIXME: Shortucuts should be more vim-like
 
         var indx = currentIndex();
         var e = motionMap.get(event.key());
@@ -65,14 +69,6 @@ final public class Selector extends QTreeView {
             }
             return;
         }
-
-        // FIXME: This if-else-fi chain too long.
-        // FIXME: Shortucuts should be more vim-like
-        if(yankedIndex != null){
-            Statusline.line.displayMsg("Aborted move", 2000);
-            yankedIndex = null;
-            return;
-        }
         else if(event.key() == Qt.Key.Key_H.value()){
             var parent = indx.parent();
             if(isExpanded(indx)) {
@@ -82,6 +78,7 @@ final public class Selector extends QTreeView {
                 setCurrentIndex(parent);
                 collapse(parent);
             }
+            return;
         }
         else if(event.key() == Qt.Key.Key_L.value()) {
             NoteItem item = (NoteItem) indx.data(Qt.ItemDataRole.UserRole);
@@ -91,8 +88,18 @@ final public class Selector extends QTreeView {
             else{
                 expand(indx);
             }
+            return;
         }
-        else if(event.key() == Qt.Key.Key_Return.value()){
+
+        // Keybindings after this point are not relevant for motion. If these are
+        // pressed, it means abort any move operation
+        if(yankedIndex != null){
+            Statusline.line.displayMsg("Aborted move", 2000);
+            yankedIndex = null;
+            return;
+        }
+
+        if(event.key() == Qt.Key.Key_Return.value()){
             var index = currentIndex();
             var item = index.data(Qt.ItemDataRole.UserRole);
             if(item instanceof Note) {
@@ -139,10 +146,7 @@ final public class Selector extends QTreeView {
         else if(event.key() == Qt.Key.Key_D.value()){
             yankedIndex = indx;
             Statusline.line.displayMsg("Moving item ...", 2000);
-            return;
         }
-
-        event.accept();
     }
 
     @Override
