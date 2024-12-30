@@ -164,7 +164,7 @@ final public class Buffer extends QPlainTextEdit {
             QApplication.clipboard().setText(cursor.selectedText());
             cursor.removeSelectedText();
             setTextCursor(cursor);
-            Statusline.line.displayMsg("Deleted", 2000);
+            Statusline.line.displayMsg("Deleted");
         }
 
         action = Action.NONE;
@@ -186,7 +186,7 @@ final public class Buffer extends QPlainTextEdit {
 
         if(ncursor.hasSelection()){
             QApplication.clipboard().setText(ncursor.selectedText());
-            Statusline.line.displayMsg("Yanked", 2000);
+            Statusline.line.displayMsg("Yanked");
             ncursor.clearSelection();
         }
 
@@ -259,10 +259,10 @@ final public class Buffer extends QPlainTextEdit {
                 if(mods[0] == Qt.KeyboardModifier.NoModifier){
                     if(document().isUndoAvailable()){
                         document().undo(cursor);
-                        Statusline.line.displayMsg("Undone", 2000);
+                        Statusline.line.displayMsg("Undone");
                     }
                     else {
-                        Statusline.line.displayMsg("Already at the earliest change", 2000);
+                        Statusline.line.displayMsg("Already at the earliest change");
                     }
                 }
             }
@@ -270,10 +270,10 @@ final public class Buffer extends QPlainTextEdit {
                 if(mods.length == 1 && mods[0] == Qt.KeyboardModifier.ControlModifier){
                     if(document().isRedoAvailable()){
                         document().redo(cursor);
-                        Statusline.line.displayMsg("Redone", 2000);
+                        Statusline.line.displayMsg("Redone");
                     }
                     else {
-                        Statusline.line.displayMsg("Already at the newest change", 2000);
+                        Statusline.line.displayMsg("Already at the newest change");
                     }
                 }
             }

@@ -26,8 +26,8 @@ final public class Statusline extends QStatusBar {
         this.addWidget(cmdline);
     }
 
-    public void displayMsg(String str, int time){
-        this.showMessage(str, time);
+    public void displayMsg(String str){
+        this.showMessage(str, 2000);
     }
 
     public void setMode(App.Mode mode){

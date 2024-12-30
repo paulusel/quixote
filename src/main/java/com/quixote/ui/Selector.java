@@ -94,7 +94,7 @@ final public class Selector extends QTreeView {
         // Keybindings after this point are not relevant for motion. If these are
         // pressed, it means abort any move operation
         if(yankedIndex != null){
-            Statusline.line.displayMsg("Aborted move", 2000);
+            Statusline.line.displayMsg("Aborted move");
             yankedIndex = null;
             return;
         }
@@ -145,7 +145,7 @@ final public class Selector extends QTreeView {
         }
         else if(event.key() == Qt.Key.Key_D.value()){
             yankedIndex = indx;
-            Statusline.line.displayMsg("Moving item ...", 2000);
+            Statusline.line.displayMsg("Moving item ...");
         }
     }
 
