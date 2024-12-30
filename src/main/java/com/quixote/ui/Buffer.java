@@ -65,6 +65,14 @@ final public class Buffer extends QPlainTextEdit {
         bufferClosed.emit(this);
     }
 
+    public void focus(){
+        tab.setStyleSheet("color: #FF9E64; font-style: italic");
+    }
+
+    public void unfocus(){
+        tab.setStyleSheet("color: white; font-style: normal");
+    }
+
     public Note note() {
         return note;
     }

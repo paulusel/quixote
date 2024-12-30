@@ -26,7 +26,7 @@ public class App extends QWidget {
 
     final private String stylesheet = """
             * {
-                background: #1A1B26;
+                background: #3D3D3D;
             }
     """;
 
@@ -65,16 +65,13 @@ public class App extends QWidget {
         // header
         header = new QWidget(this);
         hLayout = new QStackedLayout(header);
-        //header.setStyleSheet("border: 1px solid white;border-top-right-radius: 2px;border-top-left-radius: 2px;");
 
         // View Area
         viewArea = new QWidget(this);
         layout = new QStackedLayout(viewArea);
-        //viewArea.setStyleSheet("border-left: 1px solid white;border-right: 1px solid white;");
 
         // Statusline
         Statusline.init(this);
-        //Statusline.line.setStyleSheet("border: 1px solid white;border-bottom-right-radius: 2px;border-bottom-left-radius: 2px;");
 
         // view Area elements
         selector = new Selector(viewArea);

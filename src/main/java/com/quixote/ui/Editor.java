@@ -32,6 +32,7 @@ final public class Editor extends QWidget {
         bufferLayout = new QStackedLayout();
         bufferContainer.setLayout(bufferLayout);
         this.layout().addWidget(bufferContainer);
+        bufferLayout.widgetRemoved.connect(this::refocus);
 
         QTimer timer = new QTimer(this);
         timer.timeout.connect(this::save);
@@ -42,6 +43,7 @@ final public class Editor extends QWidget {
         Buffer buffer = buffers.get(note);
 
         if(buffer != null){
+            unfocusCurrent();
             bufferLayout.setCurrentWidget(buffer);
             return;
         }
@@ -51,9 +53,31 @@ final public class Editor extends QWidget {
         buffer.bufferClosed.connect(this::reapBuffer);
 
         bufferLayout.addWidget(buffer);
+        unfocusCurrent();
         bufferLayout.setCurrentWidget(buffer);
+        focusCurrent();
 
         buffers.put(note, buffer);
+    }
+
+    public void unfocusCurrent(){
+        Buffer buffer = (Buffer) bufferLayout.currentWidget();
+        if(buffer == null){
+            return;
+        }
+        buffer.unfocus();
+    }
+
+    public void refocus(int indx){
+        focusCurrent();
+    }
+
+    public void focusCurrent(){
+        Buffer buffer = (Buffer) bufferLayout.currentWidget();
+        if(buffer == null){
+            return;
+        }
+        buffer.focus();
     }
 
     public void reapBuffer(Buffer buffer) {
@@ -82,7 +106,10 @@ final public class Editor extends QWidget {
     }
 
     public void showNext(){
-        bufferLayout.setCurrentIndex((bufferLayout.currentIndex()+1)%bufferLayout.count());
+        unfocusCurrent();
+        int nextIndx = (bufferLayout.currentIndex() + 1) % bufferLayout.count();
+        bufferLayout.setCurrentIndex(nextIndx);
+        focusCurrent();
     }
 
     public void itemEdited(QModelIndex first, QModelIndex last, List<Integer> roles){
