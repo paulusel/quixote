@@ -207,6 +207,10 @@ final public class Buffer extends QPlainTextEdit {
                 action = Action.YANK;
                 return;
             }
+
+            var modifiers = event.modifiers();
+            var mods = modifiers.flags();
+
             var op = keyMotionMap.get(key);
             if(op != null){
                 cursor.movePosition(op, QTextCursor.MoveMode.MoveAnchor, motion);
@@ -214,7 +218,6 @@ final public class Buffer extends QPlainTextEdit {
                 return;
             }
 
-            var mods = event.modifiers().flags();
             if(key == Qt.Key.Key_X.value()) {
                 cursor.deleteChar();
                 setTextCursor(cursor);

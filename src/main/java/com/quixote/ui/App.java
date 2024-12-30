@@ -140,13 +140,21 @@ public class App extends QWidget {
     @Override
     public boolean event(QEvent e){
          if(e.type() == QEvent.Type.KeyPress){
-            int key = ((QKeyEvent)e).key();
+            var event = (QKeyEvent) e;
+            var modifiers = event.modifiers();
+
+            int key = event.key();
             if(key == key_tab){
                 // toggle selector/editor
                switchView();
             }
-            else if(key == Qt.Key.Key_N.value()) {
-                editor.showNext();
+            else if(key == Qt.Key.Key_Space.value()) {
+                if(modifiers.testFlag(Qt.KeyboardModifier.ShiftModifier)){
+                    editor.showPrev();
+                }
+                else if(modifiers.testFlag(Qt.KeyboardModifier.NoModifier)){
+                    editor.showNext();
+                }
             }
 
             return true;

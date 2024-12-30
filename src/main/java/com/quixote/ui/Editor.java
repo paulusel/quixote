@@ -60,26 +60,6 @@ final public class Editor extends QWidget {
         buffers.put(note, buffer);
     }
 
-    public void unfocusCurrent(){
-        Buffer buffer = (Buffer) bufferLayout.currentWidget();
-        if(buffer == null){
-            return;
-        }
-        buffer.unfocus();
-    }
-
-    public void refocus(int indx){
-        focusCurrent();
-    }
-
-    public void focusCurrent(){
-        Buffer buffer = (Buffer) bufferLayout.currentWidget();
-        if(buffer == null){
-            return;
-        }
-        buffer.focus();
-    }
-
     public void reapBuffer(Buffer buffer) {
         buffers.remove(buffer.note());
         saveWork(buffer);
@@ -105,13 +85,6 @@ final public class Editor extends QWidget {
         return buffers.isEmpty();
     }
 
-    public void showNext(){
-        unfocusCurrent();
-        int nextIndx = (bufferLayout.currentIndex() + 1) % bufferLayout.count();
-        bufferLayout.setCurrentIndex(nextIndx);
-        focusCurrent();
-    }
-
     public void itemEdited(QModelIndex first, QModelIndex last, List<Integer> roles){
         Object item = first.data(Qt.ItemDataRole.UserRole);
         if(item instanceof Notebook) {
@@ -126,12 +99,47 @@ final public class Editor extends QWidget {
         buffer.refreshName();
     }
 
-    public void showPrev(){
-
+    public void refocus(int indx){
+        focusCurrent();
     }
 
-    public void show(int offset){
+    private void unfocusCurrent(){
+        Buffer buffer = (Buffer) bufferLayout.currentWidget();
+        if(buffer == null){
+            return;
+        }
+        buffer.unfocus();
+    }
 
+    private void focusCurrent(){
+        Buffer buffer = (Buffer) bufferLayout.currentWidget();
+        if(buffer == null){
+            return;
+        }
+        buffer.focus();
+    }
+
+    public void showBufferAt(int indx){
+        int bufferCount = bufferLayout.count();
+        if(bufferCount < 2 || indx < 0 || indx >= bufferCount){
+            return;
+        }
+
+        unfocusCurrent();
+        bufferLayout.setCurrentIndex(indx);
+        focusCurrent();
+    }
+
+    public void showNext(){
+        int nextIndx = (bufferLayout.currentIndex() + 1) % bufferLayout.count();
+        showBufferAt(nextIndx);
+    }
+
+    public void showPrev(){
+        int totalCount = bufferLayout.count();
+        int index = bufferLayout.currentIndex();
+        index = (index == 0) ? totalCount - 1 : index - 1;
+        showBufferAt(index);
     }
 
     @Override
