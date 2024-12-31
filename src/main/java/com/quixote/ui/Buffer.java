@@ -3,6 +3,7 @@ package com.quixote.ui;
 import com.quixote.core.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import io.qt.core.QCoreApplication;
 import io.qt.core.QEvent;
@@ -21,6 +22,7 @@ final public class Buffer extends QPlainTextEdit {
     private QTextCursor cursor;
     private HashMap<Integer, QTextCursor.MoveOperation> keyMotionMap = new HashMap<>();
     private HashMap<Integer, Integer> keyIntMap = new HashMap<>();
+    private HashSet<Integer> ignoredKeys = new HashSet<>();
     private Action action = Action.NONE;
     private Integer motion;
 
@@ -58,6 +60,11 @@ final public class Buffer extends QPlainTextEdit {
         keyIntMap.put(Qt.Key.Key_7.value(), 7);
         keyIntMap.put(Qt.Key.Key_8.value(), 8);
         keyIntMap.put(Qt.Key.Key_9.value(), 9);
+
+        ignoredKeys.add(Qt.Key.Key_Control.value());
+        ignoredKeys.add(Qt.Key.Key_Shift.value());
+        ignoredKeys.add(Qt.Key.Key_Alt.value());
+        ignoredKeys.add(Qt.Key.Key_Meta.value());
     }
 
     public void closeBuffer(){
@@ -101,6 +108,12 @@ final public class Buffer extends QPlainTextEdit {
                 changeMode(App.Mode.NORMAL);
             }
         } else {
+
+            // FIXME: HACK:- This is not right place
+            if(ignoredKeys.contains(event.key())){
+                return true;
+            }
+
             Integer val = keyIntMap.get(event.key());
             if(val != null && event.modifiers().testFlag(Qt.KeyboardModifier.NoModifier)){
                 motion = (motion == null ? val : motion * 10 + val);
