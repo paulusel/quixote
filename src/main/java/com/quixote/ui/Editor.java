@@ -42,22 +42,18 @@ final public class Editor extends QWidget {
     public void newBuffer(Note note){
         Buffer buffer = buffers.get(note);
 
-        if(buffer != null){
-            unfocusCurrent();
-            bufferLayout.setCurrentWidget(buffer);
-            return;
+        // If buffer is not already opened, create new
+        if(buffer == null){
+            buffer = new Buffer(bufferContainer, note);
+            header.newTab(buffer.tab());
+            buffer.bufferClosed.connect(this::reapBuffer);
+
+            buffers.put(note, buffer);
+
+            bufferLayout.addWidget(buffer);
         }
 
-        buffer = new Buffer(bufferContainer, note);
-        header.newTab(buffer.tab());
-        buffer.bufferClosed.connect(this::reapBuffer);
-
-        bufferLayout.addWidget(buffer);
-        unfocusCurrent();
-        bufferLayout.setCurrentWidget(buffer);
-        focusCurrent();
-
-        buffers.put(note, buffer);
+        showBuffer(buffer);
     }
 
     public void reapBuffer(Buffer buffer) {
@@ -99,24 +95,14 @@ final public class Editor extends QWidget {
         buffer.refreshName();
     }
 
+    /**
+     *  Refocus the currently diplayed widget.
+     *
+     *  This is meant to be called by signal after a an active is closed and focus is
+     *  transfered to new one. Mainly to alert the new buffer that it is in focus now.
+     */
     public void refocus(int indx){
-        focusCurrent();
-    }
-
-    private void unfocusCurrent(){
-        Buffer buffer = (Buffer) bufferLayout.currentWidget();
-        if(buffer == null){
-            return;
-        }
-        buffer.unfocus();
-    }
-
-    private void focusCurrent(){
-        Buffer buffer = (Buffer) bufferLayout.currentWidget();
-        if(buffer == null){
-            return;
-        }
-        buffer.focus();
+        showBuffer(((Buffer) bufferLayout.currentWidget()));
     }
 
     public void showBufferAt(int indx){
@@ -124,10 +110,20 @@ final public class Editor extends QWidget {
         if(bufferCount < 2 || indx < 0 || indx >= bufferCount){
             return;
         }
+        showBuffer((Buffer) bufferLayout.itemAt(indx).widget());
+    }
 
-        unfocusCurrent();
-        bufferLayout.setCurrentIndex(indx);
-        focusCurrent();
+    public void showBuffer(Buffer buffer){
+        if(buffer == null){
+            return;
+        }
+
+        Buffer oldBuffer = (Buffer) bufferLayout.currentWidget();
+        if(oldBuffer != null){
+            oldBuffer.unfocus();
+        }
+        bufferLayout.setCurrentWidget(buffer);
+        buffer.focus();
     }
 
     public void showNext(){
