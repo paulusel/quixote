@@ -48,7 +48,7 @@ final public class Buffer extends QPlainTextEdit {
         keyMotionMap.put(Qt.Key.Key_B.value(), QTextCursor.MoveOperation.PreviousWord);
         keyMotionMap.put(Qt.Key.Key_0.value(), QTextCursor.MoveOperation.StartOfLine);
         keyMotionMap.put(Qt.Key.Key_Dollar.value(), QTextCursor.MoveOperation.EndOfLine);
-        keyMotionMap.put(Qt.Key.Key_G.value(), QTextCursor.MoveOperation.End);
+        keyMotionMap.put(Qt.Key.Key_G.value(), QTextCursor.MoveOperation.Start);
 
         keyIntMap.put(Qt.Key.Key_0.value(), 0);
         keyIntMap.put(Qt.Key.Key_1.value(), 1);
@@ -116,8 +116,15 @@ final public class Buffer extends QPlainTextEdit {
 
             Integer val = keyIntMap.get(event.key());
             if(val != null && event.modifiers().testFlag(Qt.KeyboardModifier.NoModifier)){
-                motion = (motion == null ? val : motion * 10 + val);
-                Statusline.line.appendCommand(val.toString());
+                // FIXME: some motion keys use keymodifiers like $ (Shift + 4)
+                // FIXME: some numbers are motion keys like 0 (zero - go to the beginnings)
+                if(val == 0 && motion == null){
+                    actionHandler(event);
+                }
+                else {
+                    motion = (motion == null ? val : motion * 10 + val);
+                    Statusline.line.appendCommand(val.toString());
+                }
             }
             else if(event.key() == Qt.Key.Key_Escape.value()){
                 cursor.clearSelection();
@@ -125,31 +132,30 @@ final public class Buffer extends QPlainTextEdit {
                 changeMode(App.Mode.NORMAL);
             }
             else {
-                motion = (motion == null ? 1 : motion);
-                Statusline.line.clearCommand();
-                if(action == Action.NONE){
-                    noneHandler(event);
-                }
-                else if(action == Action.YANK) {
-                    yankHandler(event);
-                }
-                else if(action == Action.DELETE) {
-                    deleteHandler(event);
-                }
-                motion = null;
+                actionHandler(event);
             }
         }
 
         return true;
     }
 
+    public void actionHandler(QKeyEvent event){
+        motion = (motion == null ? 1 : motion);
+        Statusline.line.clearCommand();
+        if(action == Action.NONE){
+            noneHandler(event);
+        }
+        else if(action == Action.YANK) {
+            yankHandler(event);
+        }
+        else if(action == Action.DELETE) {
+            deleteHandler(event);
+        }
+        motion = null;
+    }
+
     public void changeMode(App.Mode mod){
         this.mode = mod;
-
-        action = Action.NONE;
-        motion = null;
-        Statusline.line.clearCommand();
-        Statusline.line.setMode(mode);
 
         if(mode == App.Mode.INSERT){
             setCursorWidth(1);
@@ -157,14 +163,27 @@ final public class Buffer extends QPlainTextEdit {
         else {
             setCursorWidth(8);
         }
+
+        action = Action.NONE;
+        motion = null;
+        Statusline.line.clearCommand();
+        Statusline.line.setMode(mode);
+        cursor.clearSelection();
+        setTextCursor(cursor);
     }
 
     private void deleteHandler(QKeyEvent event){
         int key = event.key();
+        var modifiers = event.modifiers();
 
         var op = (key == Qt.Key.Key_D.value())
                     ? QTextCursor.MoveOperation.Down
                     : keyMotionMap.get(key);
+
+        // FIXME: HACK:- SHIFT+G should be handled in some consistent way
+        op = (key == Qt.Key.Key_G.value() && modifiers.testFlag(Qt.KeyboardModifier.ShiftModifier))
+            ? QTextCursor.MoveOperation.End
+            : op;
 
         if(op != null && ! cursor.hasSelection()){
             if(key == Qt.Key.Key_D.value()){
@@ -186,10 +205,17 @@ final public class Buffer extends QPlainTextEdit {
 
     private void yankHandler(QKeyEvent event){
         int key = event.key();
+        var modifiers = event.modifiers();
 
         var op = (key == Qt.Key.Key_Y.value())
                     ? QTextCursor.MoveOperation.Down
                     : keyMotionMap.get(key);
+
+        // FIXME: HACK:- SHIFT+G should be handled in some consistent way
+        op = (key == Qt.Key.Key_G.value() && modifiers.testFlag(Qt.KeyboardModifier.ShiftModifier))
+            ? QTextCursor.MoveOperation.End
+            : op;
+
         var ncursor = new QTextCursor(cursor);
         if(op != null && ! ncursor.hasSelection()){
             if(key == Qt.Key.Key_Y.value()){
@@ -210,6 +236,8 @@ final public class Buffer extends QPlainTextEdit {
 
     private void noneHandler(QKeyEvent event){
         int key = event.key();
+        var modifiers = event.modifiers();
+
         if(mode == App.Mode.NORMAL){
             if(key == Qt.Key.Key_D.value()){
                 action = Action.DELETE;
@@ -222,10 +250,15 @@ final public class Buffer extends QPlainTextEdit {
                 return;
             }
 
-            var modifiers = event.modifiers();
             var mods = modifiers.flags();
 
             var op = keyMotionMap.get(key);
+
+            // FIXME: HACK:- SHIFT+G should be handled in some consistent way
+            op = (key == Qt.Key.Key_G.value() && modifiers.testFlag(Qt.KeyboardModifier.ShiftModifier))
+                ? QTextCursor.MoveOperation.End
+                : op;
+
             if(op != null){
                 cursor.movePosition(op, QTextCursor.MoveMode.MoveAnchor, motion);
                 setTextCursor(cursor);
@@ -309,6 +342,12 @@ final public class Buffer extends QPlainTextEdit {
         }
         else if(mode == App.Mode.VISUAL){
             var op = keyMotionMap.get(key);
+
+            // FIXME: HACK:- SHIFT+G should be handled in some consistent way
+            op = (key == Qt.Key.Key_G.value() && modifiers.testFlag(Qt.KeyboardModifier.ShiftModifier))
+                ? QTextCursor.MoveOperation.End
+                : op;
+
             if(op != null){
                 cursor.movePosition(op, QTextCursor.MoveMode.KeepAnchor, motion);
                 setTextCursor(cursor);
