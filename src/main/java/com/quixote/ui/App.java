@@ -150,6 +150,7 @@ public class App extends QWidget {
                switchView();
             }
             else if(key == Qt.Key.Key_Space.value()) {
+                // HACK: this should be handled in editor
                 if(modifiers.testFlag(Qt.KeyboardModifier.ShiftModifier)){
                     editor.showPrev();
                 }

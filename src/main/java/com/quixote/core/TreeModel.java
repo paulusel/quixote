@@ -209,5 +209,27 @@ public class TreeModel extends QAbstractItemModel {
 
         return index(pos, 0, parent);
     }
+
+    public QModelIndex copyItem(QModelIndex newParent, Note note){
+        Notebook nbook = newParent.isValid()
+            ? (Notebook) newParent.data(Qt.ItemDataRole.UserRole)
+            : root;
+
+        beginInsertRows(newParent, 0, 0);
+        // Begin inserting
+
+        Note newNote = App.db.insertNote(nbook);
+        newNote.title(note.title());
+        newNote.document().setPlainText(note.document().toPlainText());
+        App.db.saveNote(newNote);
+
+        nbook.addItem(newNote, 0);
+        itemMap.put(Long.valueOf(newNote.hashCode()), newNote);
+
+        // End inserting
+        endInsertRows();
+
+        return index(0, 0, newParent);
+    }
 }
 

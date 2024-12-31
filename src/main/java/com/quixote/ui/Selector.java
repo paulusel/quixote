@@ -12,9 +12,11 @@ import io.qt.gui.QKeyEvent;
 import io.qt.widgets.*;
 
 final public class Selector extends QTreeView {
+    private enum PasteAction {COPY, MOVE};
     private TreeModel model = new TreeModel();
     private HashMap<Integer, QKeyEvent> motionMap = new HashMap<>();
     private QModelIndex yankedIndex;
+    private PasteAction action;
 
     public QWidget header;
 
@@ -62,10 +64,17 @@ final public class Selector extends QTreeView {
                     ? indx
                     : indx.parent();
 
-                model().moveRows(yankedIndex.parent(), yankedIndex.row(), 1, destParent, 0);
+                if(action == PasteAction.MOVE){
+                    model().moveRows(yankedIndex.parent(), yankedIndex.row(), 1, destParent, 0);
+                    setCurrentIndex(model().index(0, 0, destParent));
+                }
+                else {
+                    var destIndex = model.copyItem(destParent, (Note) yankedIndex.data(Qt.ItemDataRole.UserRole));
+                    setCurrentIndex(destIndex);
+                }
                 expand(destParent);
-                setCurrentIndex(model().index(0, 0, destParent));
                 yankedIndex = null;
+                action = null;
             }
             return;
         }
@@ -94,8 +103,9 @@ final public class Selector extends QTreeView {
         // Keybindings after this point are not relevant for motion. If these are
         // pressed, it means abort any move operation
         if(yankedIndex != null){
-            Statusline.line.displayMsg("Aborted move");
+            Statusline.line.displayMsg("Aborted operation");
             yankedIndex = null;
+            action = null;
             return;
         }
 
@@ -145,7 +155,19 @@ final public class Selector extends QTreeView {
         }
         else if(event.key() == Qt.Key.Key_D.value()){
             yankedIndex = indx;
+            action = PasteAction.MOVE;
             Statusline.line.displayMsg("Moving item ...");
+        }
+        else if(event.key() == Qt.Key.Key_Y.value()){
+            var currentItem = indx.data(Qt.ItemDataRole.UserRole);
+            if(!(currentItem instanceof Note)){
+                Statusline.line.displayMsg("Copying notebooks is not supported");
+            }
+            else {
+                yankedIndex = indx;
+                action = PasteAction.COPY;
+                Statusline.line.displayMsg("Copying item ...");
+            }
         }
     }
 
