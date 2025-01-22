@@ -25,12 +25,11 @@ public class App extends QWidget {
     private Selector selector;
 
     private final String helpText = """
-
-    There two sets of keybindings in effect depending current view.
+    There are two sets of keybindings in effect depending current view.
 
     1. Editor View
     ```````````
-    These commands handle note editing in active buffer, 
+    These commands handle note editing in active buffer,
     navigation or buffer management(e.g closing buffer).
 
     The format of commands is this:
@@ -39,19 +38,13 @@ public class App extends QWidget {
 
     Where
 
-    - [command] can be Y for yank or copy, [d] for delete and none.
+    - [command] can be [Y] for yank or copy, [D] for delete and none.
     - [number] is non negative number.
-    - movement is one of Movement keys below. In addition to those,
+    - [movement] is one of Movement keys below. In addition to those,
       two more movements are available depending on the command.
 
         * Y with Y/Yank command
         * D with D/Delete command
-
-    Examples:
-
-        2w - move two words forward (command none)
-        d2d - delete two full lines starting with current one (d command)
-        yy - copy one full line to clipboard (y command)
 
     Each of them repesent a movement covering whole line from start to end,
     unlike K and J which start from current curson position.
@@ -63,6 +56,11 @@ public class App extends QWidget {
     times whereas Y copies it to clipboard. When no command is given, only
     cursor is moved.
 
+    Examples:
+
+        2w - move two words forward (command none)
+        d2d - delete two full lines starting with current one (d command)
+        yy - copy one full line to clipboard (y command)
 
     Movement
 
@@ -99,6 +97,7 @@ public class App extends QWidget {
     A - Go to end of current line and enter insert mode
     U - undo
     Control + R - redo
+    Tab - Switch to selector view
 
     In addition to these, few control commands are also present.
 
@@ -112,15 +111,15 @@ public class App extends QWidget {
     VISUAL Mode
 
     In visual mode, text is selected interactively. When selection
-    is complete, you can press either Y or D to copy or delete the
-    sected text.
+    is done, you can press either Y or D to copy or delete the
+    sected text respectively.
 
     The selection process supports only no command format of
     command structure. Meaning only
 
         [number] + [movement]
 
-    is accepted. NOTE: only Y and D movements are not supported
+    is accepted. NOTE: Y and D movements are not supported
     as they are only applicable to Y and D commands which are
     absent in visual mode.
 
@@ -133,6 +132,10 @@ public class App extends QWidget {
     N - Add new Notebook
     J - Move one item Down
     K - Move one item Up
+    L - Expand notebook
+    H - Collapse notebook
+    Enter - Open note/Expand notebook
+    Tab - Switch to editor view(if it has any buffer open)
     Y - Copy
     D - Cut
     P - Paste copied/cut item
