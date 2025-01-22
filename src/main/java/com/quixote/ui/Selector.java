@@ -169,6 +169,9 @@ final public class Selector extends QTreeView {
                 Statusline.line.displayMsg("Copying item ...");
             }
         }
+        else {
+            QCoreApplication.sendEvent(App.app, event);
+        }
     }
 
     @Override

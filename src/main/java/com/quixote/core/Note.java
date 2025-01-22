@@ -13,7 +13,7 @@ public class Note extends NoteItem {
         super(notebook, title, id);
         doc.setPlainText(txt);
         doc.setDocumentLayout(new QPlainTextDocumentLayout(doc));
-        if (title == null || title.isEmpty() ) {
+        if (title == null || title.isEmpty()) {
             title(modified.toString());
         }
     }

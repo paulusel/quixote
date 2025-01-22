@@ -39,12 +39,14 @@ final public class Editor extends QWidget {
         timer.start(10000);
     }
 
-    public void newBuffer(Note note){
+    public void newBuffer(Note note, boolean readonly){
         Buffer buffer = buffers.get(note);
 
         // If buffer is not already opened, create new
         if(buffer == null){
             buffer = new Buffer(bufferContainer, note);
+            buffer.setReadOnly(readonly);
+
             header.newTab(buffer.tab());
             buffer.bufferClosed.connect(this::reapBuffer);
 
@@ -66,7 +68,7 @@ final public class Editor extends QWidget {
     }
 
     public void saveWork(Buffer buffer){
-            if(!buffer.document().isModified())
+            if(!buffer.document().isModified() || buffer.isReadOnly())
                 return;
             App.db.saveNote(buffer.note());
             buffer.document().setModified(false);
