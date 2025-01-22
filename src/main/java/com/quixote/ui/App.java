@@ -38,7 +38,7 @@ public class App extends QWidget {
 
     Where
 
-    - [command] can be [Y] for yank or copy, [D] for delete and none.
+    - [command] can be [Y] for yank/copy, [D] for delete or none.
     - [number] is non negative number.
     - [movement] is one of Movement keys below. In addition to those,
       two more movements are available depending on the command.
@@ -52,13 +52,13 @@ public class App extends QWidget {
     If no number is given, 1 is assumed. Otherwise, [command] and [movement]
     are repeated [number] times.
 
-    The command D deletes text covered by [movement] repeated when [number]
+    The command D deletes text covered by [movement] when repeated [number]
     times whereas Y copies it to clipboard. When no command is given, only
     cursor is moved.
 
     Examples:
 
-        2w - move two words forward (command none)
+        2w - move cursor two words forward (command none)
         d2d - delete two full lines starting with current one (d command)
         yy - copy one full line to clipboard (y command)
 
